@@ -1,0 +1,587 @@
+<!-- 
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ -->
+<!doctype html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>aaa-polymercrud-application</title>
+
+
+
+<script src="../webcomponentsjs/webcomponents.js"></script>
+
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-dialog/paper-action-dialog.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../core-animated-pages/core-animated-pages.html">
+<link rel="import" href="../core-animated-pages/transitions/cross-fade.html">
+<link rel="import" href="../core-animated-pages/transitions/slide-from-right.html">
+<link rel="import" href="../core-toolbar/core-toolbar.html">
+<link rel="import" href="../core-menu/core-menu.html">
+<link rel="import" href="../aaa-form-layout/aaa-form-layout.html">
+<link rel="import" href="../aaa-form-controls/aaa-form-controls.html">
+<link rel="import" href="../aaa-jsoncrud-interface/aaa-jsoncrud-interface.html">
+<link rel="import" href="../aaa-settings-dialog/aaa-settings-dialog.html">
+
+<style shim-shadowdom>
+
+body {
+  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  margin: 0;
+  padding: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+}
+
+/*Style the form layout*/
+aaa-form-layout /deep/ .aaa-group-box {
+  border-style:dotted;
+  border-color:#FBC02D;
+  border-width:1px;
+  width:70%;
+  margin:5px;
+  padding:5px 20px;
+}
+
+aaa-form-layout /deep/ .aaa-field-box {
+  border-color: #FBC02D;
+  border-style:solid;
+  border-width:1px;
+  margin:5px;
+  padding:5px 20px;
+  width: 150px;
+}
+/*the fields in aaa-form-layout get assigned an id from fieldAttribute in formitems.json so each field can be styled*/
+aaa-form-layout /deep/ #blurb {
+  width: 300px;
+}
+/*style the color of the floated label and underline when the nput filed has the focus*/
+/*styling the labels was a bit of a mind bender */
+aaa-form-layout /deep/ paper-input-decorator[focused] /deep/ .floated-label .label-text  {
+  color: #FBC02D;
+}
+aaa-form-layout /deep/ .focused-underline {
+  background-color: #FBC02D;
+}
+/*
+ aaa-form-layout /deep/  .floated-label .label-text {
+    color: red;
+}
+*/
+/*End style the form layout*/
+
+/*Style the form controls*/
+aaa-form-controls /deep/ .aaa-form-controls-box {
+  border-style:dotted;
+  border-color:#FBC02D;
+  border-width:1px;
+  width:70%;
+  margin:5px;
+  padding:5px 20px;
+}
+/*End style the form controls*/
+
+/*Style pages*/
+core-animated-pages /deep/ .mainpages {
+  background: #FFF9C4;
+  min-height: calc(100vh - 160px);
+  top:+10px;
+  padding:10px;
+  width:calc(100% - 24px);
+}
+/*end style pages*/
+
+/*Style the toolbar and tabs*/
+.medium-tall {
+  height: 90px;
+}
+
+paper-tabs, core-toolbar {
+  background-color: #FBC02D;
+  color: #000000;
+  box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.2);
+}
+    
+core-toolbar paper-tabs {
+  box-shadow: none;
+}
+/*End style the toolbar and tabs*/
+
+/*Style the toast messages for the jsoncrud interface*/
+
+aaa-jsoncrud-interface /deep/ paper-toast {
+  right: 10px;
+  left: auto;
+} 
+/*End style the toast messages for the jsoncrud interface*/
+
+/*Style the settings dialog*/
+aaa-settings-dialog /deep/  #dialog::shadow #scroller {
+  max-width: 500px;
+}
+
+aaa-settings-dialog /deep/ .aaa-settings-box {
+  border-color: blue;
+  border-style: solid;
+}
+
+aaa-settings-dialog /deep/ #dialog {
+  postion:fixed;
+  top: 25px;
+  left: 35px;
+}
+/*End style the settings dialog*/
+
+</style>
+
+</head>
+<body unresolved>
+
+  <!-- Set up the toolbar and tabs -- wrap in template so we can use data binding  -->
+
+  <template id='headerMenu' is="auto-binding">
+
+    <!-- toolbar set up  -->
+
+    <core-toolbar class="medium-tall">
+      <div flex>Polymer CRUD Example</div>
+
+      <!-- set up the more menu (icon with 3 vertical dots) -->
+
+      <paper-menu-button>
+        <paper-icon-button icon="more-vert"></paper-icon-button>
+        <paper-dropdown class="dropdown" transition="" halign="right">
+          <paper-item on-tap="{{menuItemSettings}}">Settings...</paper-item>
+          <!-- include the next element so we have more than one item on the more menu -->
+          <paper-item on-tap="{{menuItemOther}}">Goes no where...</paper-item>
+        </paper-dropdown>
+      </paper-menu-button>
+      <!-- set up the tabs menu for core-pages -->
+      <div class="bottom fit" horizontal layout justified>
+        <paper-tabs id='mytabs' flex on-core-select="{{tabSelected}}" selected="{{pageSelected}}">
+          <paper-tab>Maintain Users</paper-tab>
+          <paper-tab>Server Messages</paper-tab>
+          <paper-tab>Instructions</paper-tab>
+          <paper-tab>Technical Details</paper-tab>
+        </paper-tabs>      
+      </div>
+    </core-toolbar>    
+  </template>
+
+  <!-- now the main pages for the application -- each div whose parent is core-animated page represents a page -->
+
+  <core-animated-pages flex transitions="slide-from-right">
+
+    <!-- use relative (causes position: relative) on the divs so the page and background will scroll if necessary -->
+
+    <div relative id='maintainusers' class='mainpages'>
+      <template id="userForm" is="auto-binding">
+        <div id="contents">
+
+          <!-- The next element layouts out the form. Setting loadexternal to true causes 
+          an external file formitems.json to be used to configure the dialog  -->
+
+          <aaa-form-layout id="formFields" formFields="{{formFields}}" formValues="{{formValues}}" loadexternal=true>
+          </aaa-form-layout>
+
+          <!-- The next element provides the CRUD controls to use with the form fields above -->
+
+          <aaa-form-controls id="controls" on-formaction="{{formAction}}" formControlID="{{formControlID}}">
+          </aaa-form-controls>
+
+          <!-- The next element  provides the interface to the backend. -->
+
+          <aaa-jsoncrud-interface id="interface" backendurl="UserCRUD.php" msgin="{{msgin}}" msgout="{{msgout}}" 
+            emulate="{{settings.emulate}}" notify="{{settings.notify}}" on-serverresponse="{{responseReceived}}">
+          </aaa-jsoncrud-interface>
+
+          <!-- The next element provides a modal dialog to configure the application. Setting loadexternal to true causes 
+          an external file settingitems.json to be used to configure the dialog    -->
+
+          <aaa-settings-dialog id='settingsDialog' settingItems="{{settingItems}}" settings="{{settings}}" loadexternal=true>
+          </aaa-settings-dialog>
+
+          <!-- The interface may return a status indicating that a record to be updated or deleted is not current i.e. has 
+          been changed since last retrieved.  -->
+
+          <paper-action-dialog heading="Update or Delete Conflict" id='dialogConflict' 
+            class='size-position' autoCloseDisabled backdrop>
+            <p>
+              The record you were attempting to update or delete was changed since you retrieved it. 
+              Please select one of the options below and resubmit your update or delete. 
+            </p>
+            <paper-button affirmative on-tap="{{dialogKeepChanges}}">Keep your changes</paper-button>
+            <paper-button affirmative autofocus on-tap="{{dialogUseCurrent}}">Use current values</paper-button>
+          </paper-action-dialog>
+
+          <!-- The interface may return a status indicating that the record was not found  -->
+
+          <paper-action-dialog heading="Record Not Found" id='dialogNotFound' 
+                              class='size-position' autoCloseDisabled backdrop>
+            <p>
+              The record you were attempting to retrieve, update or delete was not found. 
+            </p>
+            <p>
+              If you were attempting to update or delete the record may have been deleted since last retrieved. 
+            </p>
+            <paper-button dismissive on-tap="{{dialogNotFoundGotIt}}">Got it thanks</paper-button>
+          </paper-action-dialog>
+        </div>
+      </template>
+    </div>
+
+    <!-- the interface will return messages from the server. This page is used to display these messages  -->
+
+    <div relative id='servermessages' class='mainpages'>
+      <h1>Server Messages</h1>
+      <p>Below are messages returned by the server from the last interaction.</p>
+      <p>If you get an unexpected result you should review these.</p>
+      <pre><div id='serverMessagesGoHere'></div></pre>
+    </div>
+
+    <!-- Instructions on how to use the application -->
+
+    <div relative id='instructions' class='mainpages'>
+      <h1>Instructions</h1>
+      <h2>Background</h2>
+      <p> Welcome to the Polymer CRUD sample application. This application was written to illustrate development techniques 
+          and is not designed with the end user in mind. For example the Create, Retrieve, Update and Delete terminology is used throughout.
+          Users might more naturally use terms like Display and Insert. If you don't know what Polymer is please see the technical details tab. 
+      </p><p>
+          The application has several modes. These are controlled through the settings dialog 
+          accessed from the more menu (three vertical dots) on the main title bar. 
+          The application can emulate a back-end server as well as use a real database back end. 
+          The distribution package includes a sample PHP mysql back-end program. In what follows emulation mode will be assumed.
+      </p>
+      <h2>Maintain Users Tab Walk-through</h2>
+      <p>
+          Under Maintain Users you should see a form displayed. The first two fields (ID and ConControl) are disabled. The server will
+          set these values. The remaining fields (First Name, Last Name, Blurb) can be entered by the user. 
+      </p><p>
+          Let's try out the application. Open the settings dialog from the more menu(three vertical dots) on the main toolbar.  
+          Ensure that emulation mode is on by sliding the control to the right if it is not already there. 
+      </p><p>
+          To start create four records. 
+          Enter fields such as First Name and press the Create button. 
+          Do this four times. You can navigate through the records you just created using the forward and backward arrow buttons. Try it.
+      </p><p>
+          Navigate to the third record by entering 3 in the form control field between the two arrows and pressing Retrieve. Change the Blurb and press Update. Your record will have the new blurb. Note that the ConControl field has been incremented.
+      </p><p>
+          Press the backward arrow to navigate to the second record. Press Delete to remove this record. Press the forward arrow to navigate
+          through the records and observe that the second record is no longer present.
+      </p>
+      </p><p>
+         While performing the above action note that pop up messages ("toasts") are issued for each server interaction. Also note the form (but not the rest of the application) is disabled while waiting for the server to respond. 
+      </p>
+      <h2>Server Messages Tab</h2>
+      <p>
+          This tab contains any messages the server may have issued during the last interaction. In emulation mode this is not very interesting
+          but you can review this tab after each of the actions in the Maintain Users walk-through above.
+      </p>
+      <h2>Settings Dialog</h2>
+      <p>
+          The settings dialog is accessed from the more menu on the title bar represented by the 3 vertical dots. You can control several
+          aspects of the applications behavior.
+      </p>
+          <ul>
+            <li>Host delay -- this value injects a delay in both the emulated and real back-end. A larger value is useful to observe
+              the toast notifications and the disabling of the form fields and controls.
+            </li>
+            <li>Hold locks -- this value injects a delay after the back end has read a record for update. Useful to study the 
+                effect of database locks.  This value has no effect in emulation mode.
+            </li>
+            <li>DB Emulation -- if "on" the back-end is simulated. If not the application looks for UserCRUD.php in the same 
+                directory as the application.
+            </li>Notifications -- if "on" the interface will issue toast pop up messages as it exchanges messages with the server.
+            </li>
+          </ul>
+      <h2>What's with the ID and ConControl fields</h2>
+      <p>
+          The ID field is simply the primary key of the record. It is assigned automatically when you create a record.   
+      </p>
+      <p>
+          ConControl (think concurrency control) provides a way of determining whether a record has changed since it was last retrieved. 
+          For instance a user want to be informed if the a record has changed when it is to be updated or deleted. 
+          By convention each program that updates the database must increment this value. 
+          If you have the real back-end in place you can see this in action by opening two copies of the application.  
+          In the first copy retrieve a record. In the second copy retrieve a record and update the record. In the first copy 
+          update the same record. You should get a conflict warning.   
+      </p>
+      <h2>Other Things to Try</h2>
+      <p>
+          The application should be reasonably responsive to different screen sizes. Try resizing the screen on a MAC or PC. You should see
+          form and other elements adjust to various screen sizes. The application, through its use of Polymer, 
+          should be fully touch enabled. Try it on an Android or IOS device.  
+      </p>
+    </div>
+
+    <!-- Technical details on the application including links to the GitHub to obtain the custom elements -->
+
+    <div relative id='technicaldetails' class='mainpages'>
+      <h1>Technical Details</h1>
+      <h2>Background</h2>
+      <p> Welcome to the Polymer CRUD sample application. It is a project of Will Hopkins of 
+          <a href='http://www.aureusarcus.com'>Aureus Arcus Advising Ltd</a> 
+          and was developed in part as a learning exercise as well as a means of demonstrating some of the power of 
+          web components and Polymer. <a href='https://www.polymer-project.org/'> Polymer</a> itself is a Google project to enable and enhance web components. 
+      </p>
+      <p> Many, many web applications require a way of maintaining data base records on a server. In fact after writing a "Hello World" 
+          application an application to create, retrieve, update and delete (CRUD) database records is usually next on the list
+          of prototypical applications. I wanted to learn Polymer and I also wanted to provide an application that deals with some of
+          the nuances of a multi-user environment. The sample PHP mysql back-end is transaction processing aware ensuring 
+          records are read for update, checked for currency, and only then updated or deleted. The front end application needs to be sensitive 
+          to any concurrency conflicts. 
+      </p>
+      <p> I also wanted to provide a good reference application. I've seen many post to Stack Overflow and the like asking for 
+          further examples on how to use Polymer. Polymer and web components are very powerful tools. I hope by providing a full, sample application I'll help others along the way.  
+      <h2>Custom Elements and Where to Get Them</h2>
+      <p>
+          The application makes use of the following custom elements:
+      </p>
+      <ul>
+        <li> <a href='https://github.com/Will-in-BC/aaa-form-layout.git'>aaa-form-layout</a> -- generates a form and provides a means for interacting with the form. The form may be generated 
+          from an external file (formitems.json) which makes the element highly reusable
+        </li>
+        <li> <a href='https://github.com/Will-in-BC/aaa-form-controls.git'>aaa-form-controls</a> -- generates a set of CRUD controls for a form
+        </li>
+        <li> <a href='https://github.com/Will-in-BC/aaa-settings-dialog.git'>aaa-settings-dialog</a> -- generates a modal settings dialog and a means to retrieve settings values. The dialog may be generated 
+            from an external file (settingitems.json) which makes the element highly reusable. 
+        </li>
+        <li> <a href='https://github.com/Will-in-BC/aaa-jsoncrud-interface.git'>aaa-jsoncrud-interface</a> -- provides an interface supporting CRUD actions through the passing of simple json messages.
+            The interface will also emulate the server so applications can be demonstrated without the need for a database back-end.    
+      </ul>
+      <p>
+        Links to GitHub are included in the above list. Each element has its own independent demo so you can get a good sense of usage. 
+        You can either use the zip files or bower to install. The repository for the application itself is aaa-polymercrud-application
+      </p>
+    </div>
+  </core-animated-pages>
+
+  <script>
+
+  // Wait for Polymer to be ready
+
+    document.addEventListener('polymer-ready', function() {
+
+      // set up variables and get handles to the templates included in the main page
+
+      var
+        // get a handle to the pages 
+        pages = document.querySelector('core-animated-pages'),
+        // get a handle to the toolbar and the tab menu 
+        headerMenu = document.querySelector('#headerMenu'),
+        // and a handle to the form area
+        userForm = document.querySelector('#userForm'),
+        // initialize msgseq -- this will incremented with every message sent to the backend
+        msgseq = 0,
+        // other initialization
+        msgin = {},
+        payload = {};
+        
+        // select the first page
+
+        headerMenu.pageSelected=0;
+
+      // set up msgin which will be passed to the backend
+
+      msgin.userID = "Anonymous"; // pretend we have identity management 
+      msgin.securityToken = "Let me in"; // pretend we have identity management
+
+      // select the page based on the header menu. pages is simply an array of the children of core-animated pages
+      
+      headerMenu.tabSelected = function() {
+        pages.selected = headerMenu.pageSelected;
+      } // end tabSelected
+
+      // display the settings dialog if selected from the "more" menu
+
+      headerMenu.menuItemSettings = function(e) {
+        userForm.$.settingsDialog.show();
+      } // end menuItemSettings
+
+      // The user performed some action on aaa-form-controls. Handle the event
+
+      userForm.formAction = function(e){
+        msgin.holdLocks = userForm.settings.holdLocks; // used to inject a delay in the backend after for update
+        msgin.sleep = userForm.settings.sleep; // used to inject a delay in the backend 
+
+        // used to sequence messages to the backend. In this application the user input is disabled while waiting for the 
+        // backend to respond. Use this value to sequence responses if you allow the user to submit multiple requests
+
+        msgin.msgseq = msgseq; 
+        msgseq++;
+
+        // handle the various actions returned by aaa-form-controls
+
+        switch (e.detail.action) {
+          case 'retrieve':
+            msgin.transactionType = "RETUSR";
+            payload.iD = e.detail.formControlID;
+            break;
+          case 'next':
+            msgin.transactionType = "RETUSRN";
+            payload.iD = e.detail.formControlID;
+            break;
+          case 'previous':
+            msgin.transactionType = "RETUSRP";
+            payload.iD = e.detail.formControlID;
+            break;
+          case 'create':
+            msgin.transactionType = "CRTUSR";
+            payload = this.formValues;
+            break;
+          case 'update':
+            msgin.transactionType = "UPDUSR";
+            payload = this.formValues;
+            break;
+          case 'delete':
+            msgin.transactionType = "DELUSR";
+            payload = this.formValues;
+            break;
+          default:
+            alert('Invalid Action: ' + action);
+            break;
+        }
+        msgin.payload = payload;
+        userForm.msgin = msgin;
+
+        // Now disable the input fields so the user has to wait for the backend to respond
+
+        formState('disable');
+
+        // initialize the server messages areas
+
+        document.querySelector('#serverMessagesGoHere').innerHTML = "";
+
+        // now send msgin to the backend
+
+        userForm.$.interface.go();
+      }
+
+      // The backend has responded so we need to handle the event
+
+      userForm.responseReceived = function(e) {
+
+          // populate the server messages area. Note that escapeHtml is used to sanitize the messages to avoid
+          // html injections -- a bit of belts and suspenders as also use the <pre> tag
+
+          responseParsed = "";
+          userForm.msgout.messages.forEach(function(msg) {responseParsed = responseParsed + '<br>' + escapeHtml(msg)});
+          document.querySelector('#serverMessagesGoHere').innerHTML = responseParsed;
+
+        // Now handle the response based on the status returned by the backend
+
+        switch(e.detail.status) {
+          case 'OK':
+            for (var attribute in this.formValues) {
+              if (attribute in e.detail.payload) {
+                this.formValues[attribute] = e.detail.payload[attribute];
+              } else {
+                this.formValues[attribute] = "";
+              }
+            }
+            userForm.formControlID = userForm.formValues.iD;
+
+            // re-enable input 
+
+            formState('enable');
+            break;
+          case 'Conflict':
+
+            // we have a concurrency issue the user needs to sort out -- open the dialog
+
+            userForm.$.dialogConflict.toggle();
+          break;
+          case 'Not Found':
+
+            // the record we were looking for is not found -- inform the user
+
+            userForm.$.dialogNotFound.toggle();
+          break;
+          case 'ERROR':
+            alert('Server Error');
+            formState('enable');
+          break;
+          default:
+            alert('Invalid status: ' + e.detail.status);
+          break;
+        }
+      }
+
+      // The user has decided to use the values from the backend after a concurrency conflict
+
+      userForm.dialogUseCurrent = function() {
+
+        // copy the values from the backend to the form
+         
+        for (var attribute in this.formValues) {
+          if (attribute in userForm.msgout.payload) {
+            this.formValues[attribute] = userForm.msgout.payload[attribute];
+          } else {
+            this.formValues[attribute] = "";
+          }
+        }
+        formState('enable');
+      }; // end dialogUseCurrent
+
+      // The user has decided to use the current values after a concurrency conflict -- just update the conControl field
+      
+      userForm.dialogKeepChanges = function () {
+        userForm.formValues.conControl = userForm.msgout.payload.conControl;
+        formState('enable');
+      }; // end dialogKeepChanges
+
+      // Not found -- just re-enable the form and controls
+
+      userForm.dialogNotFoundGotIt = function () {
+        formState('enable');
+      }; // end dialogNotFound
+
+      function formState(state) {
+        if (state === 'disable') {
+          userForm.$.formFields.inputState('disable');
+          userForm.$.controls.inputState('disable');
+        } else {
+          userForm.$.formFields.inputState('enable');
+          userForm.$.controls.inputState('enable');
+          userForm.$.formFields.refreshFormItems();
+        }
+      } // end formState
+
+      // escape an html string to prevent html injections
+
+      function escapeHtml(string) {
+        var entityMap = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': '&quot;',
+          "'": '&#39;',
+          "/": '&#x2F;'
+        };
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+          return entityMap[s];
+        });
+      } // end escapeHTML
+
+
+    }); // end polymer ready
+  </script>
+</body>

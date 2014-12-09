@@ -1,0 +1,62 @@
+<h1>Instructions</h1>
+      <h2>Background</h2>
+      <p> Welcome to the Polymer CRUD sample application. This application was written to illustrate development techniques 
+          and is not designed with the end user in mind. For example the Create, Retrieve, Update and Delete terminology is used throughout.
+          Users might more naturally use terms like Display and Insert. If you don't know what Polymer is please see the technical details tab. 
+      </p><p>
+          The application has several modes in which it can operate. These are controlled through the settings dialog accessed from the more menu on the main title bar. The application can emulate a back-end server as well as use a real database back end. The distribution package includes a sample PHP mysql back-end program. In what follows emulation mode will be assumed.
+      </p>
+      <h2>Maintain Users Tab Walk-through</h2>
+      <p>
+          Under Maintain Users you should see a form displayed. The first two fields (ID and ConControl) are disabled. The server will
+          set these values. The remaining fields (First Name, Last Name, Blurb) can be entered by the user. 
+      </p><p>
+          To start with create four records. Enter fields such as First Name and press the Create button four times. You can navigate through these records using the forward and backward arrow buttons.
+      </p><p>
+          Navigate to the third record by entering 3 in the form control field between the two records and pressing Retrieve. Update the Blurb and press Update. Your record will have the new blurb. Note that the ConControl field has been incremented.
+      </p><p>
+          Press the backward arrow to navigate to the second record. Press Delete to remove this record. Press the forward arrow to navigate
+          through the records and observe that the second record is no longer present.
+      </p>
+      </p><p>
+         While performing the above action note that pop up messages ("toasts") are issued for each server interaction. Also note the form (but not the rest of the application) is disabled while waiting for the server to respond. 
+      </p>
+      <h2>Server Messages Tab</h2>
+      <p>
+          This tab contains any messages the server may have issued during the last interaction. In emulation mode this is not very interesting
+          but you can review this tab after each of the actions in the Maintain Users walk-through above.
+      </p>
+      <h2>Settings Dialog</h2>
+      <p>
+          The settings dialog is accessed from the more menu on the title bar represented by the 3 vertical dots. You can control several
+          aspects of the applications behavior.
+      </p>
+          <ul>
+            <li>Host delay -- this value injects a delay in both the emulated and real back-end. It's useful to observe the toast notifications 
+                and the disabling of the form fields and controls.
+            </li>
+            <li>Hold locks -- this value injects a delay after the back end has read a record for update. Useful to study the 
+                effect of database locks.  This value has no effect in emulation mode.
+            </li>
+            <li>DB Emulation -- if "on" the back-end is simulated. If not the application looks for UserCRUD.php in the same 
+                directory as the application.
+            </li> Notifications -- if "on" the interface will issue toast pop up messages as it exchanges messages with the server.
+            </li>
+      <h2>What's with the ID and ConControl fields</h2>
+      <p>
+          The ID field is simply the primary key of the record. It is assigned automatically when you create a record.   
+      </p>
+      <p>
+          ConControl provides a way of determining whether a record has changed since it was last retrieved. 
+          For instance a user want to be informed if the a record has changed when it is to be updated or deleted. 
+          By convention each program that updates the database must increment this value. 
+          If you have the real back-end in place you can see this in action by opening two copies of the application.  
+          In the first copy retrieve a record. In the second copy retrieve a record and update the record. In the first copy 
+          update the same record. You should get a conflict warning.   
+      </p>
+      <h2>Other Things to Try</h2>
+      <p>
+          The application should be reasonably responsive to different screen sizes. Try resizing the screen on a MAC or PC. You should see
+          form and other elements adjust to various screen sizes. The application, through its use of Polymer, 
+          should be fully touch enabled. Try it on an Android or IOS device.  
+      </p>

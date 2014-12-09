@@ -1,0 +1,22 @@
+{
+  "name": "aaa-polymercrud-application",
+  "version": "0.0.3",
+  "authors": [
+    "Will Hopkins <williamr.hopkins@gmail.com>"
+  ],
+  "description": "sample application that uses Polymer to perform CRUD actions",
+  "main": "aaa-polymercrud-applications",
+  "keywords": [
+    "Polymer",
+    "web-components"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Will-in-BC/aaa-polymercrud-application.git",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

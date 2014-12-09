@@ -1,0 +1,13 @@
+[
+	[
+		{"fieldLabel":"ID", "fieldAttribute":"iD", "useControl":"input", "disabled":true, "class":"refreshLabel"},
+		{"fieldLabel":"ConControl", "fieldAttribute":"conControl", "useControl":"input", "disabled":true, "class":"refreshLabel"}
+	],
+	[
+		{"fieldLabel":"First Name", "fieldAttribute":"firstName", "useControl":"input", "class":"disableOnWait refreshLabel"},
+		{"fieldLabel":"Last Name", "fieldAttribute":"lastName", "useControl":"input", "class":"disableOnWait refreshLabel"}
+	],
+	[
+		{"fieldLabel":"Blurb", "fieldAttribute":"blurb", "useControl":"input", "class":"disableOnWait"}
+	]
+]
