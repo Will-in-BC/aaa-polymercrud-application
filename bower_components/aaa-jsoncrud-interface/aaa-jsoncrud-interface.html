@@ -1,0 +1,258 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element provides an interface to a CRUD backend with simple message passing using json. An emulation mode is
+provided so that a backend program is not necessary to demo the element. 
+
+If you want a real backend a sample php/msql backend is provided in
+the package. You will need a server that supports PHP and mysql and you will need to define the target table and 
+update the connection statement in the PHP program -- see comments in the program   
+
+##### Example
+    <aaa-jsoncrud-interface id="interface" backendurl="UserCRUD.php" msgin="{{msgin}}" msgout="{{msgout}}" 
+        emulate=false notify=true on-serverresponse="{{responseReceived}}">
+    </aaa-interface-jsoncrud>
+
+@element aaa-jsoncrud-interface
+@blurb A backend interface using AJAX, message passinging via JSON 
+@status alpha
+@homepage https://github.com/Will-in-BC/aaa-jsoncrud-interface.git
+
+Techniques illustrated:
+  -- data binding
+  -- custom events
+  -- ajax
+  -- toast notifications
+-->
+<style>
+paper-input-decorator {
+  max-width: 150px;
+}
+</style>
+<polymer-element name="aaa-jsoncrud-interface">
+  <template>
+    <div id='container'>
+      <core-ajax id='ajax' url="{{backendurl}}" method="POST" on-core-response="{{responseReceived}}" body='{{strmsgin}}' handleAs="json" 
+      id="transactionAJAX" response="{{msgout}}"></core-ajax>
+      <paper-toast id="toastSent" class='capsule' text="Transaction Sent to Server" ></paper-toast>
+      <paper-toast id="toastSentEmulation" class='capsule' text="Emulated Sent to Server" ></paper-toast>
+      <paper-toast id="toastReceived" class='capsule' text="Server Responded" style='width:150px'></paper-toast>
+    </div>
+  </template>
+  <script>
+    Polymer({
+
+      backendUrl: "",
+      notifications: true,
+      emulation: false,
+      /**
+       * On server response
+       *
+       * @event serverresponse
+      */
+       publish: {
+       /**
+         * The URL that the interface will POST to. Not required in emulation mode 
+         *
+         * @attribute backendurl
+         * @type url
+         * @default empty string
+         *
+      */
+        backendurl: "",
+       /**
+         * If true the interface will issue toast notification on send and receive from the server
+         *
+         * @attribute notify
+         * @type boolean
+         * @default true
+         *
+      */
+        notify: true,
+       /**
+         * If true the interface will emulate backend activity
+         *
+         * @attribute emulate
+         * @type boolean
+         * @default true
+         *
+      */
+        emulate: true,
+       /**
+         * The message in the form of an object to pass to the backend. See the demo for the format of msgin
+         *
+         * @attribute msgin
+         * @type object
+         * @default empty object
+         *
+      */
+        msgin:{},
+       /**
+         * The message in the form of an object returned from the backend. See the demo for format of msgout
+         *
+         * @attribute msgout
+         * @type object
+         * @default empty object
+         *
+      */
+        msgout:{},
+      },
+      created: function() {
+        this.inMemoryData = [
+          {},
+        ];
+        delete this.inMemoryData[0];
+        this.inMemoryDB = new InMemoryDB(this.inMemoryData);
+      }, // end created
+
+      /**
+       * Invoke this method to cause msgin to be POSTed to the backend 
+       *
+       * @method go()
+       * @type method
+       * @default NA
+       */
+
+      go: function() {
+        if (this.emulate) {
+          fakeDB(this.msgin, this.msgout, this.inMemoryDB);
+          if (this.notify) {this.$.toastSentEmulation.show();}
+          setTimeout(function(p){
+            p.responseReceived();
+          },this.msgin.sleep,this);
+        } else {
+            if (this.notify) {this.$.toastSent.show();}
+            this.strmsgin = JSON.stringify(this.msgin);
+            this.$.ajax.go();
+        }
+      }, //end go
+      responseReceived: function() {
+        if (this.notify) {this.$.toastReceived.show();}
+        this.fire('serverresponse', this.msgout);
+      }, // end reponseReceived
+    }); // end Polymer
+    function fakeDB(msgin,msgout,inMemoryDB){
+      inMemoryDB[msgin.transactionType](msgin,msgout);
+    }
+
+    function InMemoryDB(array){
+      var db = array;
+      this.RETUSR = function(msgin,msgout){
+        msgout.msgseq = msgin.msgseq;
+        msgout.messages = [];
+        msgout.messages.push('Begin Retrieve');
+        msgout.payload={};
+        msgout.payload.iD = msgin.payload.iD;
+        if (db[msgin.payload.iD] === undefined){
+          msgout.status = 'Not Found';
+          msgout.messages.push('Record not found');
+        } else {
+          msgout.payload = JSON.parse(JSON.stringify(db[msgin.payload.iD]));
+          msgout.status = 'OK';
+          msgout.messages.push('End Retrieve');
+        }
+      } // end RETUSR
+      this.RETUSRN = function(msgin,msgout){
+        msgout.msgseq = msgin.msgseq;
+        msgout.messages = [];
+        msgout.messages.push('Begin Retrieve Next');
+        msgout.payload={};
+        nextIndex = -1;
+        start = Number(msgin.payload.iD)+1 || 0;
+        for (i=start; i < db.length; i++) {
+          if (db[i] !== undefined) {
+            nextIndex = i;
+            break;
+          }  
+        }
+        if (nextIndex === -1) {
+          msgout.status = 'Not Found';
+          msgout.messages.push('Record not found');
+        } else {
+          msgout.payload  = JSON.parse(JSON.stringify(db[nextIndex]));
+          msgout.status = 'OK';
+          msgout.messages.push('End Retrieve Next');
+        }
+      } // end RETUSRN
+       this.RETUSRP = function(msgin,msgout){
+        msgout.msgseq = msgin.msgseq;
+        msgout.messages = [];
+        msgout.messages.push('Begin Retrieve Previous');
+        msgout.payload={};
+        nextIndex = -1;
+        start = Number(msgin.payload.iD)-1;
+        for (i=start; i > 0; i--) {
+          if (db[i] !== undefined) {
+            nextIndex = i;
+            break;
+          }  
+        }
+        if (nextIndex === -1) {
+          msgout.status = 'Not Found';
+          msgout.messages.push('Record not found');
+        } else {
+          msgout.payload = JSON.parse(JSON.stringify(db[nextIndex]));
+          msgout.status = 'OK';
+          msgout.messages.push('End Retrieve Previous');
+        }
+      } // end RETUSRP
+      this.CRTUSR = function(msgin,msgout) {
+        msgout.messages = [];
+        msgout.messages.push('Begin Create');
+        msgout.msgseq = msgin.msgseq;
+        newIndex = db.length;
+        db[newIndex] = {};
+        db[newIndex] = JSON.parse(JSON.stringify(msgin.payload));
+        db[newIndex].iD = newIndex;
+        db[newIndex].conControl = 0;
+        msgout.payload = JSON.parse(JSON.stringify(db[newIndex]));
+        msgout.status = 'OK';
+        msgout.messages.push('End Create');
+      }
+      this.UPDUSR = function(msgin,msgout) {
+        msgout.msgseq = msgin.msgseq;
+        msgout.messages = [];
+        msgout.messages.push('Begin Update');
+        msgout.payload={};
+        msgout.payload.iD = msgin.payload.iD;
+        if (db[msgin.payload.iD] === undefined){
+          msgout.status = 'Not Found';
+          msgout.messages.push('Record not found');
+        } else {
+          db[msgin.payload.iD] = JSON.parse(JSON.stringify(msgin.payload));
+          db[msgin.payload.iD].conControl++;
+          msgout.payload = JSON.parse(JSON.stringify(db[msgin.payload.iD]));
+          msgout.status = 'OK';
+          msgout.messages.push('End Update');
+        }
+
+      } // end UPDUSR
+      this.DELUSR = function(msgin,msgout) {
+        msgout.msgseq = msgin.msgseq;
+        msgout.messages = [];
+        msgout.messages.push('Begin Delete');
+        msgout.payload={};
+        msgout.payload.iD = "";
+        if (db[msgin.payload.iD] === undefined){
+          msgout.status = 'Not Found';
+          msgout.messages.push('Record not found');
+        } else {
+          delete db[msgin.payload.iD];
+          msgout.status = 'OK';
+          msgout.messages.push('End Delete');
+        }
+      } // end DELUSR
+    }
+  </script>
+</polymer-element>

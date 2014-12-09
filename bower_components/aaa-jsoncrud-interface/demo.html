@@ -1,0 +1,163 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<!doctype html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>aaa-jsoncrud-interface demo</title>
+
+
+
+<script src="../webcomponentsjs/webcomponents.js"></script>
+
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../aaa-jsoncrud-interface/aaa-jsoncrud-interface.html">
+
+<style shim-shadowdom>
+
+body {
+  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  margin: 0;
+  padding: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+}
+</style>
+
+</head>
+<body unresolved>
+  <h1>aaa-jsoncrud-interface demo</h1>
+  <p>An interface element that passes a simple json messages back and forth to a backend program. An emulation mode is 
+    provided so that the interface can be demonstrated without a working backend. The package for the element includes a sample 
+    php/mysql backend.
+  </p><p>
+    Press Send Messages and a series of messages will be sent to the emulated backend. The backend will delay response so you can see the 
+    toast notifications. If you want to rerun the demo please reload the page first.  <br>
+  </p> 
+  <template id="userForm" is="auto-binding">
+    <div id=contents>
+      <aaa-jsoncrud-interface id="jsonInterface" on-serverresponse="{{serverResponse}}" msgin="{{msgin}}" msgout="{{msgout}}" emulate=true notify=true>
+      </aaa-jsoncrud-interface>
+    </div>
+    <paper-button id='sendMessagesButton' raised on-click={{sendMessages}}>Send Messages</paper-button>
+  </template>
+  <pre>
+    <div id='results'></div>
+  </pre>
+
+  <script>
+    document.addEventListener('polymer-ready', function() {
+
+      var messages = [
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"CRTUSR", "msgseq":1,
+                      "payload": {"firstName":"Fred", "lastName": "Burffle", "blurb":"A bit about Fred" }},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"CRTUSR", "msgseq":2,
+                      "payload": {"firstName":"Jane", "lastName": "Doe", "blurb":"A bit about Jane" }},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"CRTUSR", "msgseq":3,
+                      "payload": {"firstName":"Mary", "lastName": "Smith", "blurb":"A bit about Mary" }},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"CRTUSR", "msgseq":4,
+                      "payload": {"firstName":"Mason", "lastName": "Dixon", "blurb":"A bit about Mason" }},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"UPDUSR", "msgseq":5,
+                      "payload": {"iD":4, "conControl":0, "firstName":"Mason", "lastName": "Dixon", "blurb":"Mason's new blurb" }},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"DELUSR", "msgseq":6,
+                      "payload": {"iD":2, "conControl":0 }},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"RETUSR", "msgseq":7,
+                      "payload": {"iD":4}},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"RETUSRP", "msgseq":8,
+                      "payload": {"iD":4}},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"RETUSRN", "msgseq":9,
+                      "payload": {"iD":1}},
+                      {"userID":"Pretend User", "securityToken":"Pretend Token", "sleep":2000, "transactionType":"RETUSR", "msgseq":10,
+                      "payload": {"iD":5}}
+
+        ],
+        userForm = document.querySelector('#userForm'),
+        jsonInterface,
+        messageCounter=0;
+
+      userForm.sendMessages = function() { 
+        userForm.$.sendMessagesButton.disabled = true;
+        jsonInterface = userForm.$.jsonInterface;
+        sendNextMessage();
+      } // end sendMessages
+      userForm.serverResponse = function(e){
+        document.querySelector('#results').appendChild(document.createTextNode('rcvd: ' + JSON.stringify(userForm.msgout) + '\n'));
+        sendNextMessage();
+      } // end serverResponse
+      function sendNextMessage() {
+        //
+        // keep going while we have messages to process
+        //
+        if (messageCounter < messages.length) {
+          userForm.msgin = messages[messageCounter];
+          messageCounter++;
+          //
+          // inject a 2 second delay otherwise the user cannot see all the toasts. 
+          //
+          setTimeout(function(p){
+            document.querySelector('#results').appendChild(document.createTextNode('sent: ' + JSON.stringify(userForm.msgin) + '\n'));
+            jsonInterface.go();
+          },2000);
+
+        }
+      } // end sendNextMessage
+
+    }); // end polymer ready
+//
+//  Here is what the msgin object should contain
+//
+//     msgin.userID              -- a pretend userID -- if we had an identity management solution we would pass thsi to the backend
+//     msgin.securityToken       -- a pretend security token as per the userID
+//     msgin.sleep               -- a request to the server to sleep (in milliseconds) before responding
+//     msgin.holdLocks           -- if you are using the provided PHP/mysql backend (aka the real backend) 
+//                                  sleep for this many seconds after a SELECT .. FOR UPDATE
+//                                  useful for exploring database locking on the backend. Has no effect on emulation.
+//     msgin.transactionType     -- the tranaaction you wish the server to perform. The included backend models a user database hence USR 
+//                                  CRTUSR -- create a new record 
+//                                  RETUSR -- retrieve a record with a given iD
+//                                  RETUSRN -- retrieve the user with the next iD
+//                                  RETUSRP -- retrieve the record with the previous iD
+//                                  UPDUSR -- update the record with the given iD
+//                                  DELUSR -- delete the record with the given iD      
+//     msgin.msgseq              -- a sequence number echoed back by the server. Remeber AJAX is asynchonous so if you subimit multiple
+//                                  messages without waiting for a response you will need to match up the servers responses to your requests
+//                                  and perhaps discard outdated responses. The msqseq value allows you to do this. In the demo we wait for the
+//                                  server to respond so don't need this. A real world example might be to submit multiple RETUSRN requests. 
+//     msgin.payload             -- an object containing the field names and values in the backend. 
+//     msgin.payload.iD          -- for emulation to work a number value that is a unique key for the record. Required for the real backend
+//     msgin.payload.conControl  -- for emulation to work a number value that is incremented with each update. This is used to provide a 
+//                                  form of optimistic locking for the real backend  
+//     msgin.payload.firstName   -- a text field -- used by the real backend
+//     msgin.payload.lastName    -- a text field -- used by the real backend
+//     msgin.payload.blurb       -- a text field -- used by the real backend
+//                               -- note in emulation mode you can include whatever else you want in the payload and it will be echoed back
+//
+//  Here us what msgout should provide back to you 
+//
+//     msgout.status             -- valid values are "OK", "Error", "Not Found", "Conflict"
+//                                  OK -- you request was successful
+//                                  Error -- some grotty error that at least the server could detect and report
+//                                  Not Found -- no record matched the iD provided  
+//                                  Conflict -- the value of conControl provided did not match the database indicating the record had been
+//                                              update since last retrieved
+//     msgout.seq                -- echo back of the sequence number -- see discussion above
+//     msgout.payload            -- payload as above contain the results of the request submitted through msgin
+//                                  for create requests the iD of the new record will be set
+//                                  for update request the calue of conControl will be incrememted. 
+//
+  </script>
+</body>

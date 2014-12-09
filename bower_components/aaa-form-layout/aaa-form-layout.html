@@ -1,0 +1,197 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-slider/paper-slider.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-dialog/paper-action-dialog.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element provides a layout of input elements i.e a form. The form may be generated from a json file.
+If used the json file must be in the same directory as the invoking page and must be named formitems.json
+
+##### Example
+    <aaa-form-layout id='formLayout' formItems="{{formItems}}" formResults="{{formResults}}" loadexternal=true>
+    </aaa-form-layout>
+
+@element aaa-form-layout
+@blurb Generate a form 
+@status alpha
+@homepage https://github.com/Will-in-BC/aaa-form-layout.git
+
+The classes aaa-field-box and aaa-group-box may be used to style the div containing the fields and the field group.
+Also each field is assigned an id equal to the fieldAttribute so individual fields may be styled separately. 
+
+
+Techniques illustrated:
+  -- repeated and conditional template binding
+  -- data binding
+  -- modal dialog
+  -- ajax loading of a json file
+  -- locating the path of the invoking page
+-->
+
+<polymer-element name="aaa-form-layout">
+  <template>
+    <div id='container'>
+      <template repeat="{{formGroup, i in formItems}}">
+        <div class='aaa-group-box' layout horizontal justified center wrap>
+          <template repeat="{{fieldInfo, j in formGroup}}">
+            <template if="{{fieldInfo.useControl==='input'}}">
+              <div layout horizontal justified center class='aaa-field-box' id="{{fieldInfo.fieldAttribute}}">
+                <paper-input value="{{fieldInfo.value}}" label="{{fieldInfo.fieldLabel}}" floatinglabel
+                  disabled="{{fieldInfo.disabled}}" class="{{fieldInfo.class}}" on-change="{{updateFormValues}}"
+                >
+                </paper-input>
+              </div>
+            </template>
+            <template if="{{fieldInfo.useControl==='toggle'}}">
+              <div layout horizontal justified center class='aaa-field-box' id="{{fieldInfo.fieldAttribute}}">
+                <p>{{fieldInfo.fieldLabel}}</p>
+                <div style='width:10px;'></div>
+                <paper-toggle-button checked="{{fieldInfo.value}}" class="{{fieldInfo.class}}" on-change="{{updateFormValues}}">
+                </paper-toggle-button>
+              </div>
+            </template>
+            <template if="{{fieldInfo.useControl==='slider'}}">
+              <div layout horizontal justified center class='aaa-field-box' id="{{fieldInfo.fieldAttribute}}">
+                <p>{{fieldInfo.fieldLabel}}</p>
+                <div style='width:10px;'></div>
+                <paper-slider class="{{fieldInfo.class}}" on-change="{{updateFormValues}}" value="{{fieldInfo.value}}" 
+                            min="{{fieldInfo.min}}" max="{{fieldInfo.max}}" step="{{fieldInfo.step}}" 
+                >
+                </paper-slider>
+              </div>
+            </template>
+          </template>                 
+        </div>
+      </template>
+      <core-ajax id="ajax" url="{{layoutPath}}" on-core-response="{{formItemsLoaded}}" response="{{ajaxResponse}}" handleAs="json"> 
+      </core-ajax>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      formResults: {},
+      formItems: [],
+      formMap: {},
+       publish: {
+       /**
+         * An two diemnsional array of objects that sets up the form. Either pass this array or use
+         * loadexternal to read the array from a json file. If you run the demo you will see an example 
+         * of the format of this array. The first dimension of the array is used to group fields and the second
+         * to enumerate the fields within the group. 
+         *
+         * @attribute formItems
+         * @type array of objects
+         * @default empty
+         */
+        formItems: [],
+       /**
+         * Specifies whether an external file is used to generate formItems. The file used is formitems.json located in the
+         * directory of the invoking page (not the directory of the element)
+         *
+         * @attribute loadexternal
+         * @type boolean
+         * @default false
+         */
+        loadexternal: false,
+       /**
+         * Returns an object that contains the values of the form items
+         *
+         * @attribute formValues
+         * @type object
+         * @default empty
+         */
+        formValues: {},
+      }, // end publish
+
+      ready: function() {
+        if (this.loadexternal) {
+          this.formItems = [];
+          var path = window.location.pathname;
+          var directory = path.substring(0, path.lastIndexOf('/'));
+          this.layoutPath = directory + '/formitems.json';
+          this.$.ajax.go();
+        }
+      }, // end ready
+
+      updateFormValues: function() {
+        for (i = 0; i < this.formItems.length; ++i) {
+          for (j= 0; j < this.formItems[i].length; ++j) {
+            this.formMap[this.formItems[i][j].fieldAttribute] = {};
+            this.formMap[this.formItems[i][j].fieldAttribute].i = i;
+            this.formMap[this.formItems[i][j].fieldAttribute].j = j;
+            this.formValues[this.formItems[i][j].fieldAttribute] = this.formItems[i][j].value;
+          }
+        }
+      }, // end updateFormResults
+
+       /**
+         * If formValues is updated invoke this method to update formItems and refresh labels
+         *
+         * @method refreshFormItems()
+         * @type method
+         * @default NA
+         */
+
+      refreshFormItems: function() {        
+        for (var attribute in this.formValues) {
+          this.formItems[this.formMap[attribute].i][this.formMap[attribute].j].value = this.formValues[attribute];
+        }
+        this.refreshLabels();
+      }, // end refreshFormResults
+
+      formItemsLoaded: function() {
+        this.formItems = this.ajaxResponse.slice(0);
+        this.updateFormValues();
+      }, // end formItemsLoaded
+
+       /**
+         * Invoke this method to disable or enable fields in the form 
+         *
+         * @method inputState(state)
+         * @type method
+         * @default NA
+         */
+
+      inputState: function(state) {
+        [].forEach.call(
+          this.$.container.querySelectorAll('.disableOnWait'), 
+          function(el){
+            el.disabled = (state==="disable")?true:false;
+          }
+        ); 
+      }, // end inputState
+
+       /**
+         * Invoke this method to update refresh labels on input controls
+         *
+         * @method refreshLabels()
+         * @type method
+         * @default NA
+         */
+
+      refreshLabels: function() {
+        [].forEach.call(
+          this.$.container.querySelectorAll('.refreshLabel'), 
+          function(el){
+            el.valueChanged(true);
+          }
+        );
+      } // end refreshLabels
+
+    }); // end Polymer
+  </script>
+</polymer-element>

@@ -1,0 +1,6 @@
+ [
+ {"settingLabel":"Host Delay", "settingAttribute":"sleep", "useControl":"slider","min":1000,"max":3000,"value":2000},
+ {"settingLabel":"Hold Locks", "settingAttribute":"holdLocks", "useControl":"slider","min":0,"max":30,"value":0, "step":5},
+ {"settingLabel":"DB Emulation", "settingAttribute":"emulate", "useControl":"toggle", "value":false},
+ {"settingLabel":"Notifications", "settingAttribute":"notify", "useControl":"toggle", "value":false}
+ ]

@@ -1,0 +1,87 @@
+<!--
+    @license
+    Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    Author: Will Hopkins
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+
+<!doctype html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>aaa-settings-dialog demo</title>
+
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+
+  <link rel="import" href="../font-roboto/roboto.html">
+  <link rel="import" href="../paper-button/paper-button.html">
+  <link rel="import" href="../aaa-settings-dialog/aaa-settings-dialog.html">
+
+<style shim-shadowdom>
+
+body {
+  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  margin: 0;
+  padding: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+}
+
+/*Use the following to style the dialog*/
+
+html /deep/ aaa-settings-dialog:shadow #scroller {
+    height: 600px;
+    width: 500px;
+}
+
+html /deep/ .aaa-settings-box {
+  border-color: blue;
+}
+
+</style>
+
+</head>
+<body unresolved>
+  <h1>aaa-settings-dialog demo</h1>
+  <p>A modal dialog for soliciting application settings. This demo uses an external json file to specifiy the label, 
+      the property of the settings object and the type of control (e.g. slider, toggle) used to solicit the input. A
+      sample settings file is included in the distribution of the element. 
+  </p><p>
+      Press Open Dialog to display the dialog. <br>
+      Press Get Settings to see the values set by the dialog. <br>
+      Press Show Settings Items to see the setting items built from the json file
+  </p>  
+  <template id="userForm" is="auto-binding">
+    <aaa-settings-dialog id='settingsDialog' settingItems="{{settingItems}}" settings="{{settings}}" loadexternal=true>
+    </aaa-settings-dialog>
+    <paper-button raised on-click={{showSettingsDialog}}>Open Dialog</paper-button>
+    <paper-button raised on-click={{getSettings}}>Get Settings</paper-button>
+    <paper-button raised on-click={{getSettingItems}}>Show Setting Items</paper-button>
+  </template>
+  <pre>
+    <div id='results'></div>
+  </pre>
+  <script>
+    document.addEventListener('polymer-ready', function() {
+      var userForm = document.querySelector('#userForm');
+      userForm.showSettingsDialog = function() {
+        document.querySelector('#settingsDialog').show();
+      }
+      userForm.getSettings = function() {
+        document.querySelector('#results').innerHTML = JSON.stringify(userForm.settings,null,5);
+      }
+      userForm.getSettingItems = function() {
+        document.querySelector('#results').innerHTML = JSON.stringify(userForm.settingItems,null,5);
+      }
+    }); // end polymer ready
+  </script>
+</body>

@@ -1,0 +1,127 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<!doctype html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>aaa-form-layout demo</title>
+
+
+
+<script src="../webcomponentsjs/webcomponents.js"></script>
+
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../aaa-form-layout/aaa-form-layout.html">
+
+<style shim-shadowdom>
+
+body {
+  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  margin: 0;
+  padding: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+}
+
+/*note the class aaa-group-box is assign to the containing div for each field group*/
+
+aaa-form-layout /deep/ .aaa-group-box {
+  border-style:dotted;
+  border-width:1px;
+  border-color: green;
+  margin:5px;
+  padding:5px 20px;
+  width: 50%;
+}
+
+/*note the class aaa-field-box is assign to the containing div for each field*/
+
+aaa-form-layout /deep/ .aaa-field-box {
+  border-style:dotted;
+  border-width:1px;
+  margin:5px;
+  padding:5px 20px;
+  width: 200px;
+}
+
+/*note the element assigns an id equal to the fieldAttribute value to the containing div for each
+field so each field can be styled individually. 
+*/
+
+aaa-form-layout /deep/ #slider {
+  background-color: grey;
+  width:400px;
+}
+</style>
+
+</head>
+<body unresolved>
+  <h1>aaa-form-layout demo</h1>
+  <p>A form layout element. This demo uses an external json file to specifiy the label, 
+      the property of the field object and the type of control (e.g. slider, toggle) used to solicit the input. A
+      sample formItems file is included in the distribution of the element. 
+  </p><p>
+      Press Get Results to display the values set by the form. <br>
+      Press Disable to put the form in a disabled state. <br>
+      Press Enable to put the form in an enabled state. <br>
+      Press Change a Value to programmatically set one of the forms values. <br>
+      Press Display Form Items Array to see the setting items built from the json file
+  </p> 
+  <template id="userForm" is="auto-binding">
+    <div id=contents>
+      <aaa-form-layout id='formLayout' formItems="{{formItems}}" formValues="{{formValues}}" loadexternal=true>
+      </aaa-form-layout>
+    </div>
+    <paper-button raised on-click={{getValues}}>Get Results</paper-button>
+    <paper-button raised on-click={{disableForm}}>Disable</paper-button>
+    <paper-button raised on-click={{enableForm}}>Enable</paper-button>
+    <paper-button raised on-click={{changeValue}}>Change a value</paper-button>
+    <paper-button raised on-click={{displayFormItems}}>Display Form Items array</paper-button>
+  </template>
+  <pre>
+    <div id='results'></div>
+  </pre>
+
+  <script>
+    document.addEventListener('polymer-ready', function() {
+      var userForm = document.querySelector('#userForm');
+      userForm.getValues = function() {        
+        document.querySelector('#results').innerHTML = JSON.stringify(userForm.formValues,null,5);
+      }
+      userForm.enableForm = function() {
+        document.querySelector('#formLayout').inputState('enable');
+      }
+      userForm.disableForm = function() {
+        document.querySelector('#formLayout').inputState('disable');
+      }
+      userForm.refreshLabels = function() {
+        document.querySelector('#formLayout').refreshLabels();
+      }
+      userForm.changeValue = function() {
+        this.formValues.firstName = "George";
+        //
+        // note you must call the refreshFormItems method to propagate any changed values back to the form.
+        // This method will also refresh any form labels
+        //
+        document.querySelector('#formLayout').refreshFormItems();
+      }
+      userForm.displayFormItems = function() {
+        document.querySelector('#results').innerHTML = JSON.stringify(userForm.formItems,null,5);
+      }
+    }); // end polymer ready
+  </script>
+</body>

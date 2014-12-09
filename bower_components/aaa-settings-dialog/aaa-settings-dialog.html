@@ -1,0 +1,149 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-slider/paper-slider.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-dialog/paper-action-dialog.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+
+<!--
+Element provides a modal dialog to control application settings. The settings may be generated from a json file.
+If used the json file must be in the same directory as the invoking page and must be named settingitems.json
+
+##### Example
+
+    <aaa-settings-dialog id='settingsDialog' settingItems="{{settingItems}}" settings="{{settings}}" loadexternal=true>
+    </aaa-settings-dialog>
+
+@element aaa-settings-dialog
+@blurb Modal dialog for application settings
+@status alpha
+@homepage https://github.com/Will-in-BC/aaa-settings-dialog.git
+
+
+Techniques illustrated:
+  -- repeated and conditional template binding
+  -- data binding
+  -- modal dialog
+  -- ajax loading of a json file
+  -- locating the path of the invoking page
+-->
+
+<style>
+paper-input-decorator {
+  max-width: 150px;
+}
+
+html /deep/ .aaa-settings-box {
+  border-style:dotted;
+  border-width:1px;
+  margin:5px;
+  padding:5px 20px;
+}
+</style>
+<polymer-element name="aaa-settings-dialog">
+  <template>
+    <div id='contents'>
+      <paper-action-dialog id='dialog' autoCloseDisabled backdrop>
+        <template repeat="{{settingItem in settingItems}}">
+          <div id='container'>
+            <div layout horizontal justified center wrap class='aaa-settings-box'>
+              <p>{{settingItem.settingLabel}}</p>
+              <div style='width:50px'></div>
+              <template if="{{settingItem.useControl==='input'}}">
+                <paper-input value="{{settingItem.value}}" on-change="{{updateSettings}}"></paper-input>
+              </template>
+              <template if="{{settingItem.useControl==='toggle'}}">
+                <paper-toggle-button checked="{{settingItem.value}}" on-change="{{updateSettings}}"></paper-toggle-button>
+              </template>
+              <template if="{{settingItem.useControl==='slider'}}">
+                <paper-slider on-change="{{updateSettings}}" value="{{settingItem.value}}" 
+                              min="{{settingItem.min}}" max="{{settingItem.max}}" step="{{settingItems.step}}" 
+                >
+                </paper-slider>
+              </template>
+            </div>
+          </div>
+        </template>
+        <paper-button raised dismissive>Done</paper-button>
+      </paper-action-dialog>
+      <core-ajax id="ajax" url="{{settingsPath}}" on-core-response="{{settingItemsLoaded}}" response="{{ajaxResponse}}" handleAs="json"> 
+      </core-ajax>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      publish: {
+       /**
+         * An array of objects that sets up the dialog. Either pass this array or use
+         * loadexternal to read the array from a json file. If you run the demo you will see an example 
+         * of the format of this array.
+         *
+         * @attribute settingItems
+         * @type array of objects
+         * @default empty
+         */
+        settingItems: [],
+       /**
+         * Specifies whether an external file is used to generate settingItems. The file used is settingitems.json located in the
+         * directory of the invoking page (not the directory of the element)
+         *
+         * @attribute loadexternal
+         * @type boolean
+         * @default false
+         */
+        loadexternal: false,
+       /**
+         * Returns an object that contains the values of the properties set by the dialog
+         *
+         * @attribute settings
+         * @type object
+         * @default empty
+         */
+        settings: {},
+      }, // end publish
+
+      ready: function() {
+        if (this.loadexternal) {
+          this.settingItems = [];
+          var path = window.location.pathname;
+          var directory = path.substring(0, path.lastIndexOf('/'));
+          this.settingsPath = directory + '/settingitems.json';
+          this.$.ajax.go();
+        }
+      }, // end ready
+       /**
+         * Method that causes the dialog to be displayed
+         *
+         * @method show()
+         * @type method
+         * @default NA
+         */
+
+      show: function() {
+        this.$.dialog.toggle();
+      },
+      updateSettings: function() {
+        for (i = 0; i < this.settingItems.length; ++i) {
+          this.settings[this.settingItems[i].settingAttribute] = this.settingItems[i].value;
+        }
+      }, //end updateSettings
+      settingItemsLoaded: function() {
+        this.settingItems = this.ajaxResponse.slice(0);
+        this.updateSettings();
+      }
+    }); // end Polymer
+  </script>
+</polymer-element>
+</polymer-element>

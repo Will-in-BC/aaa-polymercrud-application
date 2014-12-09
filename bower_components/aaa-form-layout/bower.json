@@ -1,0 +1,31 @@
+{
+  "name": "aaa-form-layout",
+  "version": "0.0.3",
+  "authors": [
+    "Will Hopkins"
+  ],
+  "description": "Element that layouts out and interacts with a form",
+  "keywords": [
+    "Polymer",
+    "web-components"
+  ],
+  "main": "aaa-form-layout.html",
+  "license": "MIT",
+  "homepage": "https://github.com/Will-in-BC/aaa-form-layout/",
+  "ignore": [
+    "/.*",
+    "/tests/",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "../",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

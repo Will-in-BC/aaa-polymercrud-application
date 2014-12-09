@@ -1,0 +1,40 @@
+{
+  "name": "aaa-form-controls",
+  "version": "0.0.3",
+  "authors": [
+    "Will Hopkins"
+  ],
+  "description": "A set of form controls for CRUD (create, retrieve, update, delete)",
+  "keywords": [
+    "Polymer",
+    "web-components"
+  ],
+  "main": "aaa-form-controls.html",
+  "license": "MIT",
+  "homepage": "https://github.com/Will-in-BC/aaa-form-controls/",
+  "ignore": [
+    "/.*",
+    "/tests/",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "../",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  },
+  "_release": "0.0.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.3",
+    "commit": "6cfb7cddc3991d54c78ec16b22d07e905b4f79d8"
+  },
+  "_source": "git://github.com/Will-in-BC/aaa-form-controls.git",
+  "_target": "~0.0.1",
+  "_originalSource": "aaa-form-controls"
+}
