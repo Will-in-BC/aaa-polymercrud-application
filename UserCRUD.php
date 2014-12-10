@@ -60,15 +60,15 @@ $msgout->msqseq = $msgin->msgseq;
 $msgout->messages[] = "Sleeping for: " . $msgin->sleep;
 usleep($msgin->sleep*1000);
 
-
-//
-// you will need to provide userid, password and database in the $conn= statement below
-
 // 
 // Get and check database connection
 // 
 
-$conn  = new mysqli("localhost", "your db userid", "your db password","your db");
+// ***********************************************************************************
+// You will need to replace the following with your own userid, password and database
+// ***********************************************************************************
+
+$conn  = new mysqli("localhost", "USERID", "PASSWORD","DATABASE");
 if ($conn->connect_error) {trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);}
 
 // 
@@ -262,10 +262,12 @@ function updateUser($conn,$msgin,$msgout) {
 // 
 
 	$userRecord = new DbRecord;
-	$stmt_select = $conn->prepare("SELECT FirstName, LastName, Blurb, ConControl FROM users where ID= ? FOR UPDATE");
+	$stmt_select = $conn->prepare("SELECT ID, FirstName, LastName, Blurb, ConControl FROM users where ID= ? FOR UPDATE");
 	$stmt_select->bind_param('i',$msgin->payload->iD);
 	if (!$stmt_select->execute()) {trigger_error('Wrong SQL: '  . ' Error: ' . $conn->error, E_USER_ERROR);}
-	if (!$stmt_select->bind_result($userRecord->firstName,
+	if (!$stmt_select->bind_result(
+		$userRecord->iD,
+		$userRecord->firstName,
 		$userRecord->lastName,
 		$userRecord->blurb,
 		$userRecord->conControl
@@ -333,6 +335,7 @@ function updateUser($conn,$msgin,$msgout) {
 			$msgout->messages[] = "Retrieved values were: " . $userRecord->firstName . " " . $userRecord->lastName . " " . $userRecord->blurb;
 			$msgout->messages[] = "Your update has been rolled back. Please press Update to try again"; 
 			$msgout->status = "Conflict";
+			$msgout->payload->iD = $userRecord->iD;
 			$msgout->payload->firstName = $userRecord->firstName;
 			$msgout->payload->lastName = $userRecord->lastName;
 			$msgout->payload->blurb = $userRecord->blurb;
@@ -358,10 +361,12 @@ function deleteUser($conn,$msgin,$msgout) {
 // 
 
 	$userRecord = new DbRecord;
-	$stmt_select = $conn->prepare("SELECT FirstName, LastName, Blurb, ConControl FROM users where ID= ? FOR UPDATE");
+	$stmt_select = $conn->prepare("SELECT ID, FirstName, LastName, Blurb, ConControl FROM users where ID= ? FOR UPDATE");
 	$stmt_select->bind_param('i',$msgin->payload->iD);
 	if (!$stmt_select->execute()) {trigger_error('Wrong SQL: '  . ' Error: ' . $conn->error, E_USER_ERROR);}
-	if (!$stmt_select->bind_result($userRecord->firstName,
+	if (!$stmt_select->bind_result(
+		$userRecord->iD,
+		$userRecord->firstName,
 		$userRecord->lastName,
 		$userRecord->blurb,
 		$userRecord->conControl
@@ -418,6 +423,7 @@ function deleteUser($conn,$msgin,$msgout) {
 			$msgout->messages[] = "Retrieved values were: " . $userRecord->firstName . " " . $userRecord->lastName . " " . $userRecord->blurb;
 			$msgout->messages[] = "Your delete has been rolled back. Please press Update to try again"; 
 			$msgout->status = "Conflict";
+			$msgout->payload->iD = $userRecord->iD;
 			$msgout->payload->firstName = $userRecord->firstName;
 			$msgout->payload->lastName = $userRecord->lastName;
 			$msgout->payload->blurb = $userRecord->blurb;
@@ -446,6 +452,7 @@ function customErrorHandler($error_level, $error_message, $error_file, $error_li
 
 function sendMsgout($msgout) {
 	header('Content-Type: application/json');
+	$msgout->messages[] = json_encode($msgout);
 	echo json_encode($msgout);
 } // end sendMsgout
 function checkUserAuthentication($msgin) {
