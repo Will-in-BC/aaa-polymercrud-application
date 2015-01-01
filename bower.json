@@ -1,11 +1,11 @@
 {
   "name": "aaa-polymercrud-application",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "authors": [
     "Will Hopkins <williamr.hopkins@gmail.com>"
   ],
   "description": "sample application that uses Polymer to perform CRUD actions",
-  "main": "aaa-polymercrud-applications",
+  "main": "aaa-polymercrud-application",
   "keywords": [
     "Polymer",
     "web-components"
@@ -21,11 +21,14 @@
   ],
   "dependencies": {
     "polymer": "~0.5.1",
-    "core-elements": "polymer/core-elements#~0.5.1",
-    "paper-elements": "polymer/paper-elements#~0.5.1",
-    "aaa-form-layout": "~0.0.2",
-    "aaa-form-controls": "~0.0.1",
-    "aaa-jsoncrud-interface": "~0.0.1",
-    "aaa-settings-dialog": "~0.0.2"
+    "core-elements": "polymer/core-elements#~0.5.2",
+    "paper-elements": "polymer/paper-elements#~0.5.2",
+    "aaa-form-layout": "~0.0.3",
+    "aaa-form-controls": "~0.0.5",
+    "aaa-jsoncrud-interface": "~0.0.5",
+    "aaa-settings-dialog": "~0.0.5",
+    "platform": "polymer/platform#~0.4.2",
+    "aaa-simple-content": "~0.0.5",
+    "aaa-animatedlogo-dialog": "~0.0.5"
   }
 }

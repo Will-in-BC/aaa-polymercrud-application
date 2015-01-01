@@ -1,0 +1,64 @@
+<!--
+    @license
+    Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    Author: Will Hopkins
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+
+<!doctype html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>aaa-animatedlogo-dialog demo</title>
+
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+
+  <link rel="import" href="../font-roboto/roboto.html">
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="../paper-button/paper-button.html">
+  <link rel="import" href="../aaa-animatedlogo-dialog/aaa-animatedlogo-dialog.html">
+
+<style shim-shadowdom>
+
+body {
+  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  margin: 0;
+  padding: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+}
+
+
+</style>
+
+</head>
+<body unresolved>
+  <h1>aaa-animatedlogo-dialog demo</h1>
+  <p>A modal dialog that displays an animated Aureus Arcus Advising logo -- this one is just for fun.
+  </p><p>
+      Press Open Dialog to display the dialog. <br>
+  </p>  
+  <template id="userForm" is="auto-binding">
+    <paper-button raised on-click={{showAnimatedLogoDialog}}>Open Dialog</paper-button>
+    <aaa-animatedlogo-dialog id='animatedLogoDialog' class='logo' autoCloseDisabled backdrop>
+      <paper-button raised dismissive>Done</paper-button>
+    </aaa-animatedlogo-dialog>
+  </template>
+  <script>
+    document.addEventListener('polymer-ready', function() {
+      var userForm = document.querySelector('#userForm');
+      userForm.showAnimatedLogoDialog = function() {
+        userForm.$.animatedLogoDialog.toggle();
+      }
+    }); // end polymer ready
+  </script>
+</body>

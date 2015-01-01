@@ -1,19 +1,29 @@
-<h1>Instructions</h1>
+     <div id=importContents>
+      <h1>Instructions</h1>
       <h2>Background</h2>
       <p> Welcome to the Polymer CRUD sample application. This application was written to illustrate development techniques 
-          and is not designed with the end user in mind. For example the Create, Retrieve, Update and Delete terminology is used throughout.
-          Users might more naturally use terms like Display and Insert. If you don't know what Polymer is please see the technical details tab. 
+          and is not designed with the end user in mind (although many UI techniques are used). For example the Create, Retrieve, Update and Delete terminology is used throughout.
+          Users might more naturally use terms like Display and Insert. 
+          If you don't know what Polymer is please see the technical details tab. 
       </p><p>
-          The application has several modes in which it can operate. These are controlled through the settings dialog accessed from the more menu on the main title bar. The application can emulate a back-end server as well as use a real database back end. The distribution package includes a sample PHP mysql back-end program. In what follows emulation mode will be assumed.
+          The application has several modes. These are controlled through the settings dialog 
+          accessed from the more menu (three vertical dots) on the main title bar. 
+          The application can emulate a back-end server as well as use a real database back end. 
+          The distribution package includes a sample PHP mysql back-end program. In what follows emulation mode will be assumed.
       </p>
       <h2>Maintain Users Tab Walk-through</h2>
       <p>
           Under Maintain Users you should see a form displayed. The first two fields (ID and ConControl) are disabled. The server will
           set these values. The remaining fields (First Name, Last Name, Blurb) can be entered by the user. 
       </p><p>
-          To start with create four records. Enter fields such as First Name and press the Create button four times. You can navigate through these records using the forward and backward arrow buttons.
+          Let's try out the application. Open the settings dialog from the more menu (three vertical dots) on the main toolbar.  
+          Ensure that emulation mode is on by sliding the control to the right if it is not already there. 
       </p><p>
-          Navigate to the third record by entering 3 in the form control field between the two records and pressing Retrieve. Update the Blurb and press Update. Your record will have the new blurb. Note that the ConControl field has been incremented.
+          To start create four records. 
+          Enter fields such as First Name and press the Create button. 
+          Do this four times. You can navigate through the records you just created using the forward and backward arrow buttons. Try it.
+      </p><p>
+          Navigate to the third record by entering 3 in the form control field between the two arrows and pressing Retrieve. Change the Blurb and press Update. Your record will have the new blurb. Note that the ConControl field has been incremented.
       </p><p>
           Press the backward arrow to navigate to the second record. Press Delete to remove this record. Press the forward arrow to navigate
           through the records and observe that the second record is no longer present.
@@ -32,22 +42,23 @@
           aspects of the applications behavior.
       </p>
           <ul>
-            <li>Host delay -- this value injects a delay in both the emulated and real back-end. It's useful to observe the toast notifications 
-                and the disabling of the form fields and controls.
+            <li>Host delay -- this value injects a delay in both the emulated and real back-end. A larger value is useful to observe
+              the toast notifications and the disabling of the form fields and controls.
             </li>
             <li>Hold locks -- this value injects a delay after the back end has read a record for update. Useful to study the 
                 effect of database locks.  This value has no effect in emulation mode.
             </li>
             <li>DB Emulation -- if "on" the back-end is simulated. If not the application looks for UserCRUD.php in the same 
                 directory as the application.
-            </li> Notifications -- if "on" the interface will issue toast pop up messages as it exchanges messages with the server.
+            </li>Notifications -- if "on" the interface will issue toast pop up messages as it exchanges messages with the server.
             </li>
+          </ul>
       <h2>What's with the ID and ConControl fields</h2>
       <p>
           The ID field is simply the primary key of the record. It is assigned automatically when you create a record.   
       </p>
       <p>
-          ConControl provides a way of determining whether a record has changed since it was last retrieved. 
+          ConControl (think concurrency control) provides a way of determining whether a record has changed since it was last retrieved. 
           For instance a user want to be informed if the a record has changed when it is to be updated or deleted. 
           By convention each program that updates the database must increment this value. 
           If you have the real back-end in place you can see this in action by opening two copies of the application.  
@@ -60,3 +71,5 @@
           form and other elements adjust to various screen sizes. The application, through its use of Polymer, 
           should be fully touch enabled. Try it on an Android or IOS device.  
       </p>
+    </div>
+    

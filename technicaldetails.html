@@ -1,0 +1,53 @@
+     <div id=importContents>
+      <h1>Technical Details</h1>
+      <h2>Background</h2>
+      <p> Welcome to the Polymer CRUD sample application. It is a project of Will Hopkins of 
+          <a href='http://www.aureusarcus.com'>Aureus Arcus Advising Ltd</a> 
+          and was developed, in part, as a learning exercise as well as a means of demonstrating some of the power of 
+          web components and Polymer. 
+          <a href='https://www.polymer-project.org/'> Polymer</a> itself is a Google project to enable and enhance web components. 
+      </p>
+      <p> Many, many web applications require a way of maintaining data base records on a server. In fact after writing a "Hello World" 
+          application next on the list of prototypical applications is one to create, retrieve, update and delete (CRUD) database records.
+          I wanted to learn Polymer and I also wanted to provide an application that deals with some of
+          the nuances of a multi-user environment. The sample PHP mysql back-end is transaction processing aware ensuring 
+          records are read for update, checked for currency, and only then updated or deleted. 
+          The front end application needs to be sensitive to any concurrency conflicts. 
+      </p>
+      <p> I also wanted to provide a good reference application. I've seen many post to Stack Overflow and the like asking for 
+          further examples on how to use Polymer. Polymer and web components are very powerful tools. 
+          I hope by providing a full, sample application I'll help others along the way.  
+      <h2>Custom Elements and Where to Get Them</h2>
+      <p>
+          The application makes use of the following custom elements:
+      </p>
+      <ul>
+        <li> <a href='https://github.com/Will-in-BC/aaa-form-layout.git'>aaa-form-layout</a> 
+          -- generates a form and provides a means for interacting with the form. The form may be generated 
+          from an external file (formitems.json) which makes the element highly reusable
+        </li>
+        <li> <a href='https://github.com/Will-in-BC/aaa-form-controls.git'>aaa-form-controls</a> 
+          -- generates a set of CRUD controls for a form
+        </li>
+        <li> <a href='https://github.com/Will-in-BC/aaa-settings-dialog.git'>aaa-settings-dialog</a> 
+          -- generates a modal settings dialog and a means to retrieve settings values. The dialog may be generated 
+            from an external file (settingitems.json) which makes the element highly reusable. 
+        </li>
+        <li> <a href='https://github.com/Will-in-BC/aaa-jsoncrud-interface.git'>aaa-jsoncrud-interface</a> 
+          -- provides an interface supporting CRUD actions through the passing of simple json messages.
+            The interface will also emulate the server so applications can be demonstrated without the need for a database back-end.
+        </li>    
+        <li> <a href='https://github.com/Will-in-BC/aaa-simple-content.git'>aaa-simple-content</a> 
+          -- gives a quick way of inserting content acquired through a link import tag. Used for including text such as the instructions and 
+            technical details. 
+        </li>    
+        <li> <a href='https://github.com/Will-in-BC/aaa-animatedlogo-dialog.git'>aaa-animatedlogo-dialog</a> 
+          -- this was just for fun -- an animated Aureus Arcus Advising logo. 
+        </li>    
+      </ul>
+      <p>
+        Links to GitHub are included in the above list. Each element has its own independent demo so you can get a good sense of usage. 
+        You can either use the zip files or bower to install. The repository for the application itself is 
+        <a href='https://github.com/Will-in-BC/aaa-polymercrud-application.git'>aaa-polymercrud-application</a>.
+      </p>
+    </div>

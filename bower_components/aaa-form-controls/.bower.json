@@ -1,6 +1,6 @@
 {
   "name": "aaa-form-controls",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "authors": [
     "Will Hopkins"
   ],
@@ -28,13 +28,13 @@
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
   },
-  "_release": "0.0.3",
+  "_release": "0.0.5",
   "_resolution": {
     "type": "version",
-    "tag": "v0.0.3",
-    "commit": "6cfb7cddc3991d54c78ec16b22d07e905b4f79d8"
+    "tag": "v0.0.5",
+    "commit": "3360d7b37744dc9d5493391774a8dfab3984edf0"
   },
   "_source": "git://github.com/Will-in-BC/aaa-form-controls.git",
-  "_target": "~0.0.1",
+  "_target": "~0.0.5",
   "_originalSource": "aaa-form-controls"
 }

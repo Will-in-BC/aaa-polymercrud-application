@@ -1,0 +1,193 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Element provides an animated Aureus Arcus Advising logo. 
+
+##### Example
+
+    <aaa-logo-animation>
+    </aaa-logo-animation>
+
+@element aaa-logo-animation
+@blurb animated logo
+@status alpha
+@homepage https://github.com/Will-in-BC/aaa-animatedlogo-dialog.git
+
+
+Techniques illustrated:
+  -- CSS Animation
+-->
+
+<polymer-element name="aaa-logo-animation">
+  <template>
+    <style>
+      #container {
+        display:block;
+        position: relative;
+        top:-35px;
+        left:-160px;
+      }
+      .aaa-text {
+        position:absolute;
+        top:-12px;
+        left:178px;
+        font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        font-size: 20px;
+        letter-spacing: 6px;
+        line-height: 15px;
+        opacity: 0;
+        -webkit-animation: in3d 500ms forwards;
+        -webkit-animation-delay: 740ms;
+        -webkit-animation-iteration-count: 1;
+        -webkit-animation-direction: alternate;
+                animation: in3d 500ms forwards;
+                animation-delay: 740ms;
+                animation-iteration-count: 1;
+                animation-direction: alternate;
+      }
+      .aaa-aureus {
+      }
+      .aaa-logo-bkgrd {
+        border:none;
+        background-color: #424242; 
+        overflow:hidden; 
+        position:absolute;
+        opacity:0;
+        width:161.8px;
+        height: 100px;
+        -webkit-animation: appear 1ms ease 730ms 1 alternate forwards;
+                animation: appear 1ms ease 730ms 1 alternate forwards;
+      }
+      .rect {
+        border:solid 1px; 
+        border-color: #424242; 
+        background-color: #424242; 
+        overflow:hidden; 
+        position:absolute;
+        opacity:0;    
+      }
+      .rect1 {  
+        width: 98px;  height: 98px;  
+        -webkit-animation: fromleft 500ms ease 240ms 1 alternate forwards;
+                animation: fromleft 500ms ease 240ms 1 alternate forwards;
+      }
+      .rect2 {  
+        width: 59.8px; height: 59.8px;  left: 100px;
+        -webkit-animation: fromtop 500ms ease 200ms 1 alternate forwards;
+                animation: fromtop 500ms ease 200ms 1 alternate forwards;
+      }  
+      .rect3 {  
+        width: 36.2px; height: 36.2px; left: 123.6px; top: 61.8px;
+        -webkit-animation: fromright 500ms ease 160ms 1 alternate forwards;
+                animation: fromright 500ms ease 160ms 1 alternate forwards;
+      }  
+      .rect4 {  
+        width: 21.61px; height: 21.61px; left: 100px; top: 76.39px;
+        -webkit-animation: frombottom 500ms ease 120ms 1 alternate forwards;
+                animation: frombottom 500ms ease 120ms 1 alternate forwards;
+      }  
+      .rect5 {  
+        width: 12.58px; height: 12.58px; left: 100px; top: 61.8px;
+        -webkit-animation: fromleft 500ms ease 80ms 1 alternate forwards;
+                animation: fromleft 500ms ease 80ms 1 alternate forwards;
+      }  
+      .rect6 {  
+        width: 7.01px; height: 7.01px; left: 114.59px; top: 61.8px;
+        -webkit-animation: fromtop 500ms ease 40ms 1 alternate forwards;
+                animation: fromtop 500ms ease 40ms 1 alternate forwards;
+      }  
+      .rect7 {  
+        width: 3.57px; height: 3.57px; left: 118.03px; top: 70.82px;
+        -webkit-animation: fromright 500ms ease 0ms 1 alternate forwards;
+                animation: fromright 500ms ease 0ms 1 alternate forwards;
+      }  
+      .circle {  
+        border-radius: 100px; 
+        background-color: #FFC107;  
+        position: relative; 
+      } 
+      .circle1 {width: 198px;   height: 198px;    left: 0px;} 
+      .circle2 {width: 121.6px; height: 121.6px;  left: -61.8px;} 
+      .circle3 {width: 74.4px;  height: 74.4px;   left: -38.2px;  top: -38.2px;} 
+      .circle4 {width: 45.2px;  height: 45.2px;   left: -0px;     top: -23.6px; } 
+      .circle5 {width: 27.2px;  height: 27.2px;   left: -0px;} 
+      .circle6 {width: 16px;    height: 16px;     left: -9px; } 
+      .circle7 {width: 7.4px;   height: 7.4px;    left: -4.7px;   top: -4.7px; } 
+      @-webkit-keyframes fromleft {
+      from {transform:translate(-1000px,0px);opacity:0;}
+      to {transform:translate(0px,0px);opacity:1;}
+      }
+             @-keyframes fromleft {
+      from {transform:translate(-1000px,0px);opacity:0;}
+      to {transform:translate(0px,0px);opacity:1;}
+      }
+      @-webkit-keyframes fromtop {
+          from {transform:translate(0px,-1000px);opacity:0;}
+          to {transform:translate(0px,0px);opacity:1;}
+      }
+             @-keyframes fromtop {
+          from {transform:translate(0px,-1000px);opacity:0;}
+          to {transform:translate(0px,0px);opacity:1;}
+      }
+      @-webkit-keyframes fromright {
+          from {transform:translate(1000px,0px);opacity:0;}
+          to {transform:translate(0px,0px);opacity:1;}
+      }
+             @-keyframes fromright {
+          from {transform:translate(1000px,0px);opacity:0;}
+          to {transform:translate(0px,0px);opacity:1;}
+      }
+      @-webkit-keyframes frombottom {
+          from {transform:translate(0px,1000px);opacity:0;}
+          to {transform:translate(0px,0px);opacity:1;}
+      }
+             @-keyframes frombottom {
+          from {transform:translate(0px,1000px);opacity:0;}
+          to {transform:translate(0px,0px);opacity:1;}
+      }
+      @-webkit-keyframes in3d {
+          from {transform:rotateX(90deg); opacity:0;}
+          to {transform:rotateX(0deg); opacity:1;}
+      }
+             @-keyframes in3d {
+          from {transform:rotateX(90deg); opacity:0;}
+          to {transform:rotateX(0deg); opacity:1;}
+      }
+      @-webkit-keyframes appear {
+          from {opacity:0;}
+          to {opacity:1;}
+      }
+            @-keyframes appear {
+          from {opacity:0;}
+          to {opacity:1;}
+      }
+    </style>
+    <div id='container'>
+      <div class='aaa-logo-bkgrd'></div>
+      <div class="rect rect1"><div class="circle circle1"></div></div>  
+      <div class="rect rect2"><div class="circle circle2"></div></div>  
+      <div class="rect rect3"><div class="circle circle3"></div></div>  
+      <div class="rect rect4"><div class="circle circle4"></div></div>  
+      <div class="rect rect5"><div class="circle circle5"></div></div>  
+      <div class="rect rect6"><div class="circle circle6"></div></div>  
+      <div class="rect rect7"><div class="circle circle7"></div></div>  
+      <div class='aaa-text'>
+        <p class='aaa-aureus'>Aureus</p>
+        <p class='aaa-arcus'>Arcus</p>
+        <p class='aaa-advising'>Advising</p>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+    }); // end Polymer
+  </script>
+</polymer-element>

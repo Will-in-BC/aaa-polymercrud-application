@@ -1,6 +1,6 @@
 {
   "name": "aaa-jsoncrud-interface",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "authors": [
     "Will Hopkins"
   ],
@@ -28,13 +28,13 @@
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
   },
-  "_release": "0.0.4",
+  "_release": "0.0.5",
   "_resolution": {
     "type": "version",
-    "tag": "v0.0.4",
-    "commit": "b6d3dab2b0cf7894e107d8bc45ae3bc3d276b723"
+    "tag": "v0.0.5",
+    "commit": "ff6eb78e02e2caf04f848a05bda056bd4209cca4"
   },
   "_source": "git://github.com/Will-in-BC/aaa-jsoncrud-interface.git",
-  "_target": "~0.0.1",
+  "_target": "~0.0.5",
   "_originalSource": "aaa-jsoncrud-interface"
 }

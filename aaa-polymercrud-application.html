@@ -35,6 +35,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../aaa-form-controls/aaa-form-controls.html">
 <link rel="import" href="../aaa-jsoncrud-interface/aaa-jsoncrud-interface.html">
 <link rel="import" href="../aaa-settings-dialog/aaa-settings-dialog.html">
+<link rel="import" href="../aaa-simple-content/aaa-simple-content.html">
+<link rel="import" href="../aaa-animatedlogo-dialog/aaa-animatedlogo-dialog.html">
+<link rel="import" href="instructions.html" id='getInstructions'>
+<link rel="import" href="technicaldetails.html" id='getTechnicalDetails'>
 
 <style shim-shadowdom>
 
@@ -49,6 +53,8 @@ body {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-touch-callout: none;
 }
+
+
 
 /*Style the form layout*/
 aaa-form-layout /deep/ .aaa-group-box {
@@ -72,20 +78,15 @@ aaa-form-layout /deep/ .aaa-field-box {
 aaa-form-layout /deep/ #blurb {
   width: 300px;
 }
-/*style the color of the floated label and underline when the nput filed has the focus*/
-/*styling the labels was a bit of a mind bender */
+
+/*style the color of the floated label and underline when the input filed has the focus*/
+/*styling the floated labels was a bit of a mind bender */
 aaa-form-layout /deep/ paper-input-decorator[focused] /deep/ .floated-label .label-text  {
   color: #FBC02D;
 }
 aaa-form-layout /deep/ .focused-underline {
   background-color: #FBC02D;
 }
-/*
- aaa-form-layout /deep/  .floated-label .label-text {
-    color: red;
-}
-*/
-/*End style the form layout*/
 
 /*Style the form controls*/
 aaa-form-controls /deep/ .aaa-form-controls-box {
@@ -133,19 +134,13 @@ aaa-jsoncrud-interface /deep/ paper-toast {
 /*End style the toast messages for the jsoncrud interface*/
 
 /*Style the settings dialog*/
-aaa-settings-dialog /deep/  #dialog::shadow #scroller {
-  max-width: 500px;
-}
 
-aaa-settings-dialog /deep/ .aaa-settings-box {
+html /deep/ .aaa-settings-box {
   border-color: blue;
-  border-style: solid;
-}
-
-aaa-settings-dialog /deep/ #dialog {
-  postion:fixed;
-  top: 25px;
-  left: 35px;
+  border-style:dotted;
+  border-width:1px;
+  margin:5px;
+  padding:5px 20px;
 }
 /*End style the settings dialog*/
 
@@ -170,7 +165,7 @@ aaa-settings-dialog /deep/ #dialog {
         <paper-dropdown class="dropdown" transition="" halign="right">
           <paper-item on-tap="{{menuItemSettings}}">Settings...</paper-item>
           <!-- include the next element so we have more than one item on the more menu -->
-          <paper-item on-tap="{{menuItemOther}}">Goes no where...</paper-item>
+          <paper-item on-tap="{{menuItemLogo}}">Aureus Arcus Advising...</paper-item>
         </paper-dropdown>
       </paper-menu-button>
       <!-- set up the tabs menu for core-pages -->
@@ -206,7 +201,7 @@ aaa-settings-dialog /deep/ #dialog {
           <aaa-form-controls id="controls" on-formaction="{{formAction}}" formControlID="{{formControlID}}">
           </aaa-form-controls>
 
-          <!-- The next element  provides the interface to the backend. -->
+          <!-- The next element provides the interface to the backend. -->
 
           <aaa-jsoncrud-interface id="interface" backendurl="UserCRUD.php" msgin="{{msgin}}" msgout="{{msgout}}" 
             emulate="{{settings.emulate}}" notify="{{settings.notify}}" on-serverresponse="{{responseReceived}}">
@@ -218,7 +213,13 @@ aaa-settings-dialog /deep/ #dialog {
           <aaa-settings-dialog id='settingsDialog' settingItems="{{settingItems}}" settings="{{settings}}" loadexternal=true>
           </aaa-settings-dialog>
 
-          <!-- The interface may return a status indicating that a record to be updated or deleted is not current i.e. has 
+
+          <!-- The next element is just for fun and displays an animated logo -->
+
+          <aaa-animatedlogo-dialog id='logoDialog' class='logo' autoCloseDisabled backdrop>
+            <paper-button raised dismissive>Done</paper-button>
+          </aaa-animatedlogo-dialog>
+                <!-- The interface may return a status indicating that a record to be updated or deleted is not current i.e. has 
           been changed since last retrieved.  -->
 
           <paper-action-dialog heading="Update or Delete Conflict" id='dialogConflict' 
@@ -259,119 +260,13 @@ aaa-settings-dialog /deep/ #dialog {
     <!-- Instructions on how to use the application -->
 
     <div relative id='instructions' class='mainpages'>
-      <h1>Instructions</h1>
-      <h2>Background</h2>
-      <p> Welcome to the Polymer CRUD sample application. This application was written to illustrate development techniques 
-          and is not designed with the end user in mind. For example the Create, Retrieve, Update and Delete terminology is used throughout.
-          Users might more naturally use terms like Display and Insert. If you don't know what Polymer is please see the technical details tab. 
-      </p><p>
-          The application has several modes. These are controlled through the settings dialog 
-          accessed from the more menu (three vertical dots) on the main title bar. 
-          The application can emulate a back-end server as well as use a real database back end. 
-          The distribution package includes a sample PHP mysql back-end program. In what follows emulation mode will be assumed.
-      </p>
-      <h2>Maintain Users Tab Walk-through</h2>
-      <p>
-          Under Maintain Users you should see a form displayed. The first two fields (ID and ConControl) are disabled. The server will
-          set these values. The remaining fields (First Name, Last Name, Blurb) can be entered by the user. 
-      </p><p>
-          Let's try out the application. Open the settings dialog from the more menu(three vertical dots) on the main toolbar.  
-          Ensure that emulation mode is on by sliding the control to the right if it is not already there. 
-      </p><p>
-          To start create four records. 
-          Enter fields such as First Name and press the Create button. 
-          Do this four times. You can navigate through the records you just created using the forward and backward arrow buttons. Try it.
-      </p><p>
-          Navigate to the third record by entering 3 in the form control field between the two arrows and pressing Retrieve. Change the Blurb and press Update. Your record will have the new blurb. Note that the ConControl field has been incremented.
-      </p><p>
-          Press the backward arrow to navigate to the second record. Press Delete to remove this record. Press the forward arrow to navigate
-          through the records and observe that the second record is no longer present.
-      </p>
-      </p><p>
-         While performing the above action note that pop up messages ("toasts") are issued for each server interaction. Also note the form (but not the rest of the application) is disabled while waiting for the server to respond. 
-      </p>
-      <h2>Server Messages Tab</h2>
-      <p>
-          This tab contains any messages the server may have issued during the last interaction. In emulation mode this is not very interesting
-          but you can review this tab after each of the actions in the Maintain Users walk-through above.
-      </p>
-      <h2>Settings Dialog</h2>
-      <p>
-          The settings dialog is accessed from the more menu on the title bar represented by the 3 vertical dots. You can control several
-          aspects of the applications behavior.
-      </p>
-          <ul>
-            <li>Host delay -- this value injects a delay in both the emulated and real back-end. A larger value is useful to observe
-              the toast notifications and the disabling of the form fields and controls.
-            </li>
-            <li>Hold locks -- this value injects a delay after the back end has read a record for update. Useful to study the 
-                effect of database locks.  This value has no effect in emulation mode.
-            </li>
-            <li>DB Emulation -- if "on" the back-end is simulated. If not the application looks for UserCRUD.php in the same 
-                directory as the application.
-            </li>Notifications -- if "on" the interface will issue toast pop up messages as it exchanges messages with the server.
-            </li>
-          </ul>
-      <h2>What's with the ID and ConControl fields</h2>
-      <p>
-          The ID field is simply the primary key of the record. It is assigned automatically when you create a record.   
-      </p>
-      <p>
-          ConControl (think concurrency control) provides a way of determining whether a record has changed since it was last retrieved. 
-          For instance a user want to be informed if the a record has changed when it is to be updated or deleted. 
-          By convention each program that updates the database must increment this value. 
-          If you have the real back-end in place you can see this in action by opening two copies of the application.  
-          In the first copy retrieve a record. In the second copy retrieve a record and update the record. In the first copy 
-          update the same record. You should get a conflict warning.   
-      </p>
-      <h2>Other Things to Try</h2>
-      <p>
-          The application should be reasonably responsive to different screen sizes. Try resizing the screen on a MAC or PC. You should see
-          form and other elements adjust to various screen sizes. The application, through its use of Polymer, 
-          should be fully touch enabled. Try it on an Android or IOS device.  
-      </p>
+      <aaa-simple-content linkSelector='#getInstructions'></aaa-simple-content>
     </div>
 
     <!-- Technical details on the application including links to the GitHub to obtain the custom elements -->
 
     <div relative id='technicaldetails' class='mainpages'>
-      <h1>Technical Details</h1>
-      <h2>Background</h2>
-      <p> Welcome to the Polymer CRUD sample application. It is a project of Will Hopkins of 
-          <a href='http://www.aureusarcus.com'>Aureus Arcus Advising Ltd</a> 
-          and was developed in part as a learning exercise as well as a means of demonstrating some of the power of 
-          web components and Polymer. <a href='https://www.polymer-project.org/'> Polymer</a> itself is a Google project to enable and enhance web components. 
-      </p>
-      <p> Many, many web applications require a way of maintaining data base records on a server. In fact after writing a "Hello World" 
-          application an application to create, retrieve, update and delete (CRUD) database records is usually next on the list
-          of prototypical applications. I wanted to learn Polymer and I also wanted to provide an application that deals with some of
-          the nuances of a multi-user environment. The sample PHP mysql back-end is transaction processing aware ensuring 
-          records are read for update, checked for currency, and only then updated or deleted. The front end application needs to be sensitive 
-          to any concurrency conflicts. 
-      </p>
-      <p> I also wanted to provide a good reference application. I've seen many post to Stack Overflow and the like asking for 
-          further examples on how to use Polymer. Polymer and web components are very powerful tools. I hope by providing a full, sample application I'll help others along the way.  
-      <h2>Custom Elements and Where to Get Them</h2>
-      <p>
-          The application makes use of the following custom elements:
-      </p>
-      <ul>
-        <li> <a href='https://github.com/Will-in-BC/aaa-form-layout.git'>aaa-form-layout</a> -- generates a form and provides a means for interacting with the form. The form may be generated 
-          from an external file (formitems.json) which makes the element highly reusable
-        </li>
-        <li> <a href='https://github.com/Will-in-BC/aaa-form-controls.git'>aaa-form-controls</a> -- generates a set of CRUD controls for a form
-        </li>
-        <li> <a href='https://github.com/Will-in-BC/aaa-settings-dialog.git'>aaa-settings-dialog</a> -- generates a modal settings dialog and a means to retrieve settings values. The dialog may be generated 
-            from an external file (settingitems.json) which makes the element highly reusable. 
-        </li>
-        <li> <a href='https://github.com/Will-in-BC/aaa-jsoncrud-interface.git'>aaa-jsoncrud-interface</a> -- provides an interface supporting CRUD actions through the passing of simple json messages.
-            The interface will also emulate the server so applications can be demonstrated without the need for a database back-end.    
-      </ul>
-      <p>
-        Links to GitHub are included in the above list. Each element has its own independent demo so you can get a good sense of usage. 
-        You can either use the zip files or bower to install. The repository for the application itself is 
-        <a href='https://github.com/Will-in-BC/aaa-polymercrud-application.git'>aaa-polymercrud-application</a>.
-      </p>
+      <aaa-simple-content linkSelector='#getTechnicalDetails'></aaa-simple-content>
     </div>
   </core-animated-pages>
 
@@ -415,6 +310,12 @@ aaa-settings-dialog /deep/ #dialog {
 
       headerMenu.menuItemSettings = function(e) {
         userForm.$.settingsDialog.show();
+      } // end menuItemSettings
+
+      // display the animated logo dialog if selected from the "more" menu
+
+      headerMenu.menuItemLogo = function(e) {
+        userForm.$.logoDialog.toggle();
       } // end menuItemSettings
 
       // The user performed some action on aaa-form-controls. Handle the event

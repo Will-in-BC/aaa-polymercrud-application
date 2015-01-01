@@ -1,0 +1,52 @@
+<!--
+@license
+Copyright (c) 2014 Aureus Arcus Advising Ltd. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+Author: Will Hopkins
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../font-roboto/roboto.html">
+
+<!--
+Element inserts html from a link import. The link must contain the html to be inserted in an element with the 
+id importContents
+
+##### Example
+
+    <link rel="import" href="importme.html" id='pleaseGetMe'>
+
+    <aaa-simple-content linkSelector='#pleaseGetMe'>
+    </aaa-simple-content>
+
+@element aaa-simple-content
+@blurb Inserts html from a link import
+@status alpha
+@homepage https://github.com/Will-in-BC/aaa-simple-content.git
+-->
+
+
+<polymer-element name="aaa-simple-content" attributes='linkSelector'>
+  <template>
+    <div id='contents'>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      publish: {
+
+      /**
+       * @attribute linkSelector
+       * @type string
+       * @default ''
+       */
+      linkSelector: ''
+      }, // end publish
+      ready: function() {
+        var contentToInsert = document.querySelector(this.linkSelector).import.querySelector('#importContents');
+        this.$.contents.appendChild(contentToInsert.cloneNode(true));
+      } // end ready
+    }); // end Polymer
+  </script>
+</polymer-element>
