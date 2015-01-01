@@ -178,17 +178,6 @@ html /deep/ .aaa-settings-box {
         </paper-tabs>      
       </div>
     </core-toolbar>    
-      <!-- The next element provides a modal dialog to configure the application. Setting loadexternal to true causes 
-      an external file settingitems.json to be used to configure the dialog    -->
-
-      <aaa-settings-dialog id='settingsDialog' settingItems="{{settingItems}}" settings="{{settings}}" loadexternal=true>
-      </aaa-settings-dialog>
-
-      <!-- The next element is just for fun and displays an animated logo -->
-
-      <aaa-animatedlogo-dialog id='logoDialog' class='logo' autoCloseDisabled backdrop>
-        <paper-button raised dismissive>Done</paper-button>
-      </aaa-animatedlogo-dialog>
   </template>
 
   <!-- now the main pages for the application -- each div whose parent is core-animated page represents a page -->
@@ -218,8 +207,20 @@ html /deep/ .aaa-settings-box {
             emulate="{{settings.emulate}}" notify="{{settings.notify}}" on-serverresponse="{{responseReceived}}">
           </aaa-jsoncrud-interface>
 
-          <!-- The interface may return a status indicating that a record to be updated or deleted is not current i.e. has 
-            been changed since last retrieved.  -->
+          <!-- The next element provides a modal dialog to configure the application. Setting loadexternal to true causes 
+          an external file settingitems.json to be used to configure the dialog    -->
+
+          <aaa-settings-dialog id='settingsDialog' settingItems="{{settingItems}}" settings="{{settings}}" loadexternal=true>
+          </aaa-settings-dialog>
+
+
+          <!-- The next element is just for fun and displays an animated logo -->
+
+          <aaa-animatedlogo-dialog id='logoDialog' class='logo' autoCloseDisabled backdrop>
+            <paper-button raised dismissive>Done</paper-button>
+          </aaa-animatedlogo-dialog>
+                <!-- The interface may return a status indicating that a record to be updated or deleted is not current i.e. has 
+          been changed since last retrieved.  -->
 
           <paper-action-dialog heading="Update or Delete Conflict" id='dialogConflict' 
             class='size-position' autoCloseDisabled backdrop>
@@ -308,13 +309,13 @@ html /deep/ .aaa-settings-box {
       // display the settings dialog if selected from the "more" menu
 
       headerMenu.menuItemSettings = function(e) {
-        headerMenu.$.settingsDialog.show();
+        userForm.$.settingsDialog.show();
       } // end menuItemSettings
 
       // display the animated logo dialog if selected from the "more" menu
 
       headerMenu.menuItemLogo = function(e) {
-        headerMenu.$.logoDialog.toggle();
+        userForm.$.logoDialog.toggle();
       } // end menuItemSettings
 
       // The user performed some action on aaa-form-controls. Handle the event
