@@ -31,6 +31,5 @@
   },
   "_source": "git://github.com/Will-in-BC/aaa-simple-content.git",
   "_target": "~0.0.5",
-  "_originalSource": "aaa-simple-content",
-  "_direct": true
+  "_originalSource": "aaa-simple-content"
 }

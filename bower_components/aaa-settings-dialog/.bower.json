@@ -30,6 +30,6 @@
     "commit": "2ee4de6caaad0e19e75d86fa12133f90cf62c838"
   },
   "_source": "git://github.com/Will-in-BC/aaa-settings-dialog.git",
-  "_target": "~0.0.2",
+  "_target": "~0.0.5",
   "_originalSource": "aaa-settings-dialog"
 }
