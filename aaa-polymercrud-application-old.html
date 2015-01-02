@@ -151,7 +151,7 @@ html /deep/ .aaa-settings-box {
 
   <!-- Set up the toolbar and tabs -- wrap in template so we can use data binding  -->
 
-  <template id='userForm' is="auto-binding">
+  <template id='headerMenu' is="auto-binding">
 
     <!-- toolbar set up  -->
 
@@ -189,14 +189,16 @@ html /deep/ .aaa-settings-box {
       <aaa-animatedlogo-dialog id='logoDialog' class='logo' autoCloseDisabled backdrop>
         <paper-button raised dismissive>Done</paper-button>
       </aaa-animatedlogo-dialog>
+  </template>
 
   <!-- now the main pages for the application -- each div whose parent is core-animated page represents a page -->
 
-  <core-animated-pages flex transitions="slide-from-right" id='mainPages'>
+  <core-animated-pages flex transitions="slide-from-right">
 
     <!-- use relative (causes position: relative) on the divs so the page and background will scroll if necessary -->
 
     <div relative id='maintainusers' class='mainpages'>
+      <template id="userForm" is="auto-binding">
         <div id="contents">
 
           <!-- The next element layouts out the form. Setting loadexternal to true causes 
@@ -242,6 +244,7 @@ html /deep/ .aaa-settings-box {
             <paper-button dismissive on-tap="{{dialogNotFoundGotIt}}">Got it thanks</paper-button>
           </paper-action-dialog>
         </div>
+      </template>
     </div>
 
     <!-- the interface will return messages from the server. This page is used to display these messages  -->
@@ -265,7 +268,6 @@ html /deep/ .aaa-settings-box {
       <aaa-simple-content linkSelector='#getTechnicalDetails'></aaa-simple-content>
     </div>
   </core-animated-pages>
-  </template>
 
   <script>
 
@@ -276,18 +278,21 @@ html /deep/ .aaa-settings-box {
       // set up variables and get handles to the templates included in the main page
 
       var
-        // handle to the form area
-        userForm = document.querySelector('#userForm'),
         // get a handle to the pages 
+        pages = document.querySelector('core-animated-pages'),
+        // get a handle to the toolbar and the tab menu 
+        headerMenu = document.querySelector('#headerMenu'),
+        // and a handle to the form area
+        userForm = document.querySelector('#userForm'),
+        // initialize msgseq -- this will incremented with every message sent to the backend
         msgseq = 0,
         // other initialization
         msgin = {},
-        tabSelectedCount = 0;
         payload = {};
         
         // select the first page
 
-        userForm.pageSelected=0;
+        headerMenu.pageSelected=0;
 
       // set up msgin which will be passed to the backend
 
@@ -296,36 +301,27 @@ html /deep/ .aaa-settings-box {
 
       // select the page based on the header menu. pages is simply an array of the children of core-animated pages
       
-      userForm.tabSelected = function() {
-        //
-        // this is a bit of a hack -- it looks as if tabSelected can be fired before the shadow dom is 
-        // completely set up. Check to make sure the $ hash is available before using.
-        // Should be further investigated. 
-        //
-        if (typeof (userForm.$) !== 'undefined') {
-          pages = userForm.$.mainPages;
-          pages.selected = userForm.pageSelected;
-        }
-
+      headerMenu.tabSelected = function() {
+        pages.selected = headerMenu.pageSelected;
       } // end tabSelected
 
       // display the settings dialog if selected from the "more" menu
 
-      userForm.menuItemSettings = function(e) {
-        userForm.$.settingsDialog.show();
+      headerMenu.menuItemSettings = function(e) {
+        headerMenu.$.settingsDialog.show();
       } // end menuItemSettings
 
       // display the animated logo dialog if selected from the "more" menu
 
-      userForm.menuItemLogo = function(e) {
-        userForm.$.logoDialog.toggle();
+      headerMenu.menuItemLogo = function(e) {
+        headerMenu.$.logoDialog.toggle();
       } // end menuItemSettings
 
       // The user performed some action on aaa-form-controls. Handle the event
 
       userForm.formAction = function(e){
-        msgin.holdLocks = userForm.settings.holdLocks; // used to inject a delay in the backend after for update
-        msgin.sleep = userForm.settings.sleep; // used to inject a delay in the backend 
+        msgin.holdLocks = headerMenu.settings.holdLocks; // used to inject a delay in the backend after for update
+        msgin.sleep = headerMenu.settings.sleep; // used to inject a delay in the backend 
 
         // used to sequence messages to the backend. In this application the user input is disabled while waiting for the 
         // backend to respond. Use this value to sequence responses if you allow the user to submit multiple requests
@@ -458,10 +454,6 @@ html /deep/ .aaa-settings-box {
       userForm.dialogNotFoundGotIt = function () {
         formState('enable');
       }; // end dialogNotFound
-
-      function formReady() {
-        alert('ready');
-      }
 
       function formState(state) {
         if (state === 'disable') {
