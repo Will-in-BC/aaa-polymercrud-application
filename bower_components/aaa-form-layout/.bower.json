@@ -1,6 +1,6 @@
 {
   "name": "aaa-form-layout",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "authors": [
     "Will Hopkins"
   ],
@@ -28,11 +28,11 @@
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
   },
-  "_release": "0.0.3",
+  "_release": "0.0.7",
   "_resolution": {
     "type": "version",
-    "tag": "v0.0.3",
-    "commit": "c82eba1ebfc604dfd6fefacb8ef5f6977e6966dc"
+    "tag": "v0.0.7",
+    "commit": "b2dd94dd7b5870c830b59d844fbc6ac6519600c3"
   },
   "_source": "git://github.com/Will-in-BC/aaa-form-layout.git",
   "_target": "~0.0.3",

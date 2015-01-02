@@ -320,8 +320,8 @@ html /deep/ .aaa-settings-box {
       // The user performed some action on aaa-form-controls. Handle the event
 
       userForm.formAction = function(e){
-        msgin.holdLocks = userForm.settings.holdLocks; // used to inject a delay in the backend after for update
-        msgin.sleep = userForm.settings.sleep; // used to inject a delay in the backend 
+        msgin.holdLocks = headerMenu.settings.holdLocks; // used to inject a delay in the backend after for update
+        msgin.sleep = headerMenu.settings.sleep; // used to inject a delay in the backend 
 
         // used to sequence messages to the backend. In this application the user input is disabled while waiting for the 
         // backend to respond. Use this value to sequence responses if you allow the user to submit multiple requests
